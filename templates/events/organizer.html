@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ organizer.name }} | KULOSA{% endblock %}
+{% block meta_description %}Events by {{ organizer.name }} on KULOSA.{% endblock %}
+{% block content %}
+<div class="bg-navy-900 text-white on-navy">
+  <div class="mx-auto flex max-w-6xl items-center gap-5 px-4 py-10">
+    {% if organizer.logo %}<img src="{{ organizer.logo.url }}" alt="" class="h-20 w-20 rounded-xl bg-white object-cover">{% endif %}
+    <div>
+      <h1 class="text-3xl font-extrabold tracking-tight">{{ organizer.name }}{% if organizer.is_verified %} <span class="badge badge-free align-middle">Verified</span>{% endif %}</h1>
+      {% if organizer.description %}<p class="mt-2 max-w-2xl text-white/80">{{ organizer.description }}</p>{% endif %}
+      <p class="mt-3 flex flex-wrap gap-x-4 text-sm">
+        {% if organizer.contact_email %}<a class="underline" href="mailto:{{ organizer.contact_email }}">{{ organizer.contact_email }}</a>{% endif %}
+        {% if organizer.contact_phone %}<a class="underline" href="tel:{{ organizer.contact_phone }}">{{ organizer.contact_phone }}</a>{% endif %}
+        {% if organizer.website %}<a class="underline" href="{{ organizer.website }}" target="_blank" rel="noopener noreferrer nofollow">Website</a>{% endif %}
+      </p>
+    </div>
+  </div>
+</div>
+<div class="mx-auto max-w-6xl px-4 py-8">
+  <h2 class="text-xl font-extrabold">Upcoming events</h2>
+  {% if page.object_list %}
+  <div class="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{% for event in page.object_list %}{% include "partials/_event_card.html" %}{% endfor %}</div>
+  {% if page.has_other_pages %}
+  <nav class="mt-8 flex items-center justify-between" aria-label="Pagination">
+    {% if page.has_previous %}<a class="btn btn-outline" href="?page={{ page.previous_page_number }}">Previous</a>{% else %}<span></span>{% endif %}
+    <span class="text-sm text-navy-700">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+    {% if page.has_next %}<a class="btn btn-outline" href="?page={{ page.next_page_number }}">Next</a>{% else %}<span></span>{% endif %}
+  </nav>
+  {% endif %}
+  {% else %}<p class="mt-4 text-sm text-navy-700">No upcoming events right now.</p>{% endif %}
+</div>
+{% endblock %}

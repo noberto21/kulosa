@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Report a listing | KULOSA{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-lg px-4 py-12">
+  <a href="{{ event.get_absolute_url }}" class="text-sm font-semibold text-flame-600 hover:underline">Back to the event</a>
+  <h1 class="mt-2 text-3xl font-extrabold tracking-tight">Report this listing</h1>
+  <p class="mt-2 text-sm text-navy-700">You're reporting <strong>{{ event.title }}</strong>. Our team reviews every report.</p>
+  <form method="post" class="mt-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-navy-900/10" novalidate>
+    {% csrf_token %}
+    {% include "partials/_form.html" %}
+    <button type="submit" class="btn btn-primary mt-6 w-full">Send report</button>
+  </form>
+</div>
+{% endblock %}

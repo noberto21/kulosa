@@ -1,0 +1,10 @@
+{# Renders a Django form with the site's field styles. Usage: include with form=form #}
+{% if form.non_field_errors %}
+<div class="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
+  {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+</div>
+{% endif %}
+{% for field in form.hidden_fields %}{{ field }}{% endfor %}
+<div class="space-y-4">
+  {% for field in form.visible_fields %}{% include "partials/_field.html" %}{% endfor %}
+</div>

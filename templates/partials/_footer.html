@@ -1,0 +1,26 @@
+<footer class="mt-16 bg-navy-950 text-white on-navy">
+  <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-3">
+    <div>
+      {% include "partials/_wordmark.html" %}
+      <p class="mt-3 max-w-xs text-sm text-white/70">{{ TAGLINE }} Find what's on in Kenya and tell people about your own events.</p>
+    </div>
+    <nav aria-label="Explore" class="text-sm">
+      <h2 class="font-semibold">Explore</h2>
+      <ul class="mt-3 space-y-2 text-white/70">
+        <li><a class="hover:text-white" href="{% url 'events:explore' %}">Explore Events</a></li>
+        <li><a class="hover:text-white" href="{% url 'core:categories' %}">Categories</a></li>
+        <li><a class="hover:text-white" href="{% url 'core:share_event' %}">Share an Event</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Company" class="text-sm">
+      <h2 class="font-semibold">KULOSA</h2>
+      <ul class="mt-3 space-y-2 text-white/70">
+        <li><a class="hover:text-white" href="{% url 'core:about' %}">About</a></li>
+        <li><a class="hover:text-white" href="{% url 'core:contact' %}">Contact</a></li>
+        <li><a class="hover:text-white" href="{% url 'core:terms' %}">Terms</a></li>
+        <li><a class="hover:text-white" href="{% url 'core:privacy' %}">Privacy</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="border-t border-white/10 py-4 text-center text-xs text-white/60">&copy; {% now "Y" %} KULOSA. Tickets are sold by organizers and their ticketing partners, not by KULOSA.</div>
+</footer>

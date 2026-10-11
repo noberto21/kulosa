@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}{% if selected_category %}{{ selected_category.name }} events{% else %}Explore events{% endif %} | KULOSA{% endblock %}
+{% block meta_description %}Search concerts, sports, festivals, parties, campus and community events across Kenya by keyword, category, place and date.{% endblock %}
+{% block content %}
+<div class="bg-navy-900 text-white on-navy">
+  <div class="mx-auto max-w-6xl px-4 py-10">
+    <h1 class="text-3xl font-extrabold tracking-tight">{% if selected_category %}{{ selected_category.name }}{% else %}Explore events{% endif %}</h1>
+    <p class="mt-2 text-white/80">{% if selected_category %}{{ selected_category.description }}{% else %}Search by keyword, then narrow by category, place, date and price.{% endif %}</p>
+  </div>
+</div>
+
+<div class="mx-auto max-w-6xl px-4 py-8">
+  <form method="get" action="{% url 'events:explore' %}" class="rounded-xl bg-white p-4 shadow-sm ring-1 ring-navy-900/10" role="search" aria-label="Filter events">
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="sm:col-span-2">
+        <label for="f-q" class="field-label">Search</label>
+        <input id="f-q" name="q" type="search" value="{{ params.q }}" class="field" placeholder="Event name, venue or keyword" maxlength="100">
+      </div>
+      <div>
+        <label for="f-category" class="field-label">Category</label>
+        <select id="f-category" name="category" class="field">
+          <option value="">All categories</option>
+          {% for c in categories %}<option value="{{ c.slug }}" {% if params.category == c.slug %}selected{% endif %}>{{ c.name }} ({{ c.live_count }})</option>{% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="f-location" class="field-label">County or town</label>
+        <input id="f-location" name="location" list="location-list" value="{{ params.location }}" class="field" placeholder="e.g. Kisumu" maxlength="60">
+        <datalist id="location-list">{% for l in locations %}<option value="{{ l }}">{% endfor %}</datalist>
+      </div>
+      <div>
+        <label for="f-when" class="field-label">When</label>
+        <select id="f-when" name="when" class="field">
+          {% for value, label in when_choices %}<option value="{{ value }}" {% if params.when == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="f-on" class="field-label">On a specific date</label>
+        <input id="f-on" name="on" type="date" value="{{ params.on }}" class="field">
+      </div>
+      <div>
+        <label for="f-price" class="field-label">Price</label>
+        <select id="f-price" name="price" class="field">
+          {% for value, label in price_choices %}<option value="{{ value }}" {% if params.price == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="f-sort" class="field-label">Sort by</label>
+        <select id="f-sort" name="sort" class="field">
+          {% for value, label in sort_choices %}<option value="{{ value }}" {% if params.sort == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="mt-4 flex flex-wrap gap-3">
+      <button type="submit" class="btn btn-primary">Apply filters</button>
+      {% if has_filters %}<a href="{% url 'events:explore' %}" class="btn btn-outline">Clear filters</a>{% endif %}
+    </div>
+  </form>
+
+  <p class="mt-6 text-sm text-navy-700" aria-live="polite">{{ total }} event{{ total|pluralize }} found</p>
+
+  {% if page.object_list %}
+  <div class="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {% for event in page.object_list %}{% include "partials/_event_card.html" %}{% endfor %}
+  </div>
+
+  {% if page.has_other_pages %}
+  <nav class="mt-10 flex items-center justify-between" aria-label="Pagination">
+    {% if page.has_previous %}<a class="btn btn-outline" href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page.previous_page_number }}">Previous</a>{% else %}<span></span>{% endif %}
+    <span class="text-sm text-navy-700">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+    {% if page.has_next %}<a class="btn btn-outline" href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page.next_page_number }}">Next</a>{% else %}<span></span>{% endif %}
+  </nav>
+  {% endif %}
+  {% else %}
+  <div class="mt-4">{% include "partials/_empty_state.html" with no_events_yet=site_has_events|yesno:"no,yes" %}</div>
+  {% endif %}
+</div>
+{% endblock %}

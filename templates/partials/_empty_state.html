@@ -1,0 +1,16 @@
+{% if no_events_yet == "yes" %}
+<div class="rounded-xl border-2 border-dashed border-navy-900/20 bg-white px-6 py-14 text-center">
+  <h2 class="text-lg font-bold">No events are listed yet</h2>
+  <p class="mx-auto mt-2 max-w-md text-sm text-navy-700">Be the first to share one. Every listing is checked before it goes live.</p>
+  <a href="{% url 'core:share_event' %}" class="btn btn-primary mt-5">Share an event</a>
+</div>
+{% else %}
+<div class="rounded-xl border-2 border-dashed border-navy-900/20 bg-white px-6 py-14 text-center">
+  <h2 class="text-lg font-bold">No events match those filters</h2>
+  <p class="mx-auto mt-2 max-w-md text-sm text-navy-700">Try a different date, remove a filter, or search for a broader keyword. Know about something happening? Tell people about it.</p>
+  <div class="mt-5 flex flex-wrap justify-center gap-3">
+    <a href="{% url 'events:explore' %}" class="btn btn-dark">Clear filters</a>
+    <a href="{% url 'core:share_event' %}" class="btn btn-outline">Share an event</a>
+  </div>
+</div>
+{% endif %}

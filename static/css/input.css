@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-paper font-sans text-navy-900 antialiased; }
+  :focus-visible { @apply outline outline-2 outline-offset-2 outline-flame-500; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+}
+
+@layer components {
+  /* Buttons */
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors; }
+  .btn-primary { @apply bg-flame-500 text-navy-950 hover:bg-flame-600 hover:text-white; }
+  .btn-dark { @apply bg-navy-900 text-white hover:bg-navy-700; }
+  .btn-outline { @apply border border-navy-900/25 text-navy-900 hover:bg-navy-900 hover:text-white; }
+  .btn-outline-light { @apply border border-white/40 text-white hover:bg-white hover:text-navy-900; }
+
+  /* Form controls */
+  .field-label { @apply mb-1 block text-xs font-semibold text-navy-700; }
+  .field { @apply w-full rounded-lg border border-navy-900/20 bg-white px-3 py-2.5 text-sm text-navy-900 placeholder:text-navy-700/60; }
+
+  /* Badges */
+  .badge { @apply inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold; }
+  .badge-free { @apply bg-emerald-100 text-emerald-900; }
+  .badge-paid { @apply bg-navy-100 text-navy-900; }
+  .badge-demo { @apply bg-flame-100 text-flame-600; }
+
+  /* Wordmark fallback (no logo file needed) */
+  .wordmark { @apply inline-flex items-center gap-2 text-xl font-extrabold tracking-tight; }
+  .wordmark-mark {
+    @apply relative inline-block h-7 w-7 rounded-md bg-flame-500;
+  }
+  .wordmark-mark::before, .wordmark-mark::after {
+    content: ""; @apply absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-navy-900;
+  }
+  .wordmark-mark::before { left: -4px; }
+  .wordmark-mark::after { right: -4px; }
+  .on-navy .wordmark-mark::before, .on-navy .wordmark-mark::after { @apply bg-navy-900; }
+
+  /* ---- Ticket card: the signature element ---- */
+  .ticket { @apply relative flex flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-navy-900/10 transition-shadow hover:shadow-md; }
+  .ticket-poster { @apply relative aspect-[16/10] w-full; }
+  .ticket-stub {
+    @apply absolute left-3 top-3 flex w-14 flex-col items-center rounded-md bg-white py-1.5 text-navy-900 shadow;
+  }
+  .ticket-tear {
+    @apply relative h-0 border-t-2 border-dashed border-navy-900/20;
+  }
+  .ticket-tear::before, .ticket-tear::after {
+    content: ""; @apply absolute -top-3 h-6 w-6 rounded-full bg-paper ring-1 ring-navy-900/10;
+  }
+  .on-navy .ticket-tear::before, .on-navy .ticket-tear::after { @apply bg-navy-900 ring-0; }
+  .ticket-tear::before { left: -12px; }
+  .ticket-tear::after { right: -12px; }
+
+  /* Poster placeholders by category (no images in Phase 1) */
+  .poster { background-color: #13294B; }
+  .poster-music    { background: radial-gradient(circle at 80% 20%, #FF5A1F 0 18%, transparent 19%), repeating-radial-gradient(circle at 80% 20%, rgba(255,255,255,.12) 0 2px, transparent 2px 14px), #1D3A66; }
+  .poster-sports   { background: repeating-linear-gradient(115deg, rgba(255,255,255,.1) 0 14px, transparent 14px 28px), #0F6B4F; }
+  .poster-festival { background: radial-gradient(circle at 20% 80%, #FFB020 0 22%, transparent 23%), radial-gradient(circle at 75% 30%, #FF5A1F 0 16%, transparent 17%), #5B2A86; }
+  .poster-party    { background: radial-gradient(circle at 50% 120%, #FF5A1F 0 45%, transparent 46%), repeating-linear-gradient(90deg, rgba(255,255,255,.08) 0 3px, transparent 3px 20px), #2A1245; }
+  .poster-tech     { background: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px) 0 0/22px 22px, linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px) 0 0/22px 22px, #0B3C5D; }
+  .poster-campus   { background: repeating-linear-gradient(0deg, rgba(255,255,255,.1) 0 2px, transparent 2px 18px), #8A3B12; }
+  .poster-business { background: linear-gradient(135deg, transparent 0 55%, rgba(255,90,31,.9) 55% 70%, transparent 70%), #13294B; }
+  .poster-arts     { background: radial-gradient(circle at 30% 40%, #F4C95D 0 14%, transparent 15%), radial-gradient(circle at 70% 70%, #E85D75 0 20%, transparent 21%), #3B1F4A; }
+  .poster-food     { background: radial-gradient(circle at 50% 50%, transparent 0 22%, rgba(255,255,255,.16) 23% 25%, transparent 26% 40%, rgba(255,255,255,.1) 41% 43%, transparent 44%), #A63D1A; }
+  .poster-community{ background: radial-gradient(circle at 25% 25%, rgba(255,255,255,.18) 0 8%, transparent 9%), radial-gradient(circle at 75% 60%, rgba(255,255,255,.18) 0 12%, transparent 13%), #1F6F5C; }
+  .poster-religious{ background: radial-gradient(circle at 50% 35%, rgba(255,255,255,.2) 0 14%, transparent 15%), linear-gradient(180deg, transparent 0 60%, rgba(0,0,0,.25) 60%), #4A3B7A; }
+  .poster-conference{ background: repeating-linear-gradient(90deg, rgba(255,255,255,.08) 0 40px, transparent 40px 80px), linear-gradient(135deg, #0B3C5D 0 60%, #1D6FA3 60%); }
+  .poster-other    { background: radial-gradient(circle at 70% 30%, rgba(255,90,31,.85) 0 12%, transparent 13%), #1D3A66; }
+  .poster-outdoor  { background: linear-gradient(160deg, transparent 0 50%, rgba(255,255,255,.14) 50% 100%), linear-gradient(200deg, transparent 0 60%, rgba(0,0,0,.2) 60% 100%), #2E5E3E; }
+}

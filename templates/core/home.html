@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}KULOSA | Discover what's happening near you in Kenya{% endblock %}
+{% block content %}
+
+<section class="bg-navy-900 text-white on-navy">
+  <div class="mx-auto grid max-w-6xl gap-10 px-4 py-14 lg:grid-cols-5 lg:py-20">
+    <div class="lg:col-span-3">
+      <h1 class="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">Discover What's Happening Near You</h1>
+      <p class="mt-4 max-w-xl text-lg text-white/80">Concerts, matches, festivals, campus nights and community days across Kenya, all in one place. Find something to do this week, or tell people about your own event.</p>
+
+      <form action="{% url 'events:explore' %}" method="get" class="mt-8 rounded-xl bg-white p-4 text-navy-900 shadow-lg" role="search">
+        <div class="grid gap-3 sm:grid-cols-3">
+          <div>
+            <label for="hero-q" class="field-label">What are you looking for?</label>
+            <input id="hero-q" name="q" type="search" class="field" placeholder="Event or keyword" maxlength="100">
+          </div>
+          <div>
+            <label for="hero-location" class="field-label">Where?</label>
+            <input id="hero-location" name="location" type="text" class="field" placeholder="Town or county" maxlength="60">
+          </div>
+          <div>
+            <label for="hero-when" class="field-label">When?</label>
+            <select id="hero-when" name="when" class="field">
+              {% for value, label in when_choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-4 w-full sm:w-auto">Search events</button>
+      </form>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="{% url 'events:explore' %}" class="btn btn-outline-light">Explore all events</a>
+        <a href="{% url 'core:share_event' %}" class="btn btn-outline-light">Share your event</a>
+      </div>
+    </div>
+
+    <aside class="lg:col-span-2" aria-labelledby="today-heading">
+      <div class="ticket text-navy-900">
+        <div class="bg-flame-500 px-5 py-3">
+          <h2 id="today-heading" class="text-sm font-extrabold text-navy-950">On today</h2>
+        </div>
+        <div class="ticket-tear"></div>
+        {% if today %}
+        <ul class="divide-y divide-navy-900/10">
+          {% for event in today %}
+          <li>
+            <a href="{% url 'events:detail' event.slug %}" class="block px-5 py-3 hover:bg-paper">
+              <span class="block text-sm font-bold">{{ event.title }}</span>
+              <span class="block text-xs text-navy-700">{{ event.start_datetime|date:"g:i A" }} &middot; {% if event.event_type == "ONLINE" %}Online{% else %}{{ event.town|default:event.county }}{% endif %}</span>
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="px-5 py-6 text-sm text-navy-700">Nothing listed for today yet. Browse what's coming up.</p>
+        {% endif %}
+        <a href="{% url 'events:explore' %}?when=today" class="block border-t border-navy-900/10 px-5 py-2 text-xs font-semibold text-flame-600 hover:underline">See everything on today</a>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="mx-auto max-w-6xl px-4 pt-12" aria-labelledby="cat-heading">
+  <div class="mb-5 flex items-end justify-between">
+    <h2 id="cat-heading" class="text-2xl font-extrabold tracking-tight">Browse by category</h2>
+    <a href="{% url 'core:categories' %}" class="text-sm font-semibold text-flame-600 hover:underline">All categories</a>
+  </div>
+  <ul class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+    {% for c in categories %}
+    <li>
+      <a href="{% url 'events:explore' %}?category={{ c.slug }}" class="poster poster-{{ c.poster_style }} relative flex h-24 items-end overflow-hidden rounded-xl p-3 text-white ring-1 ring-navy-900/10 hover:ring-flame-500">
+        <span class="rounded bg-navy-950/70 px-2 py-1 text-sm font-bold">{{ c.name }}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+{% url 'events:explore' as explore_url %}
+{% if not site_has_events %}
+<section class="mx-auto max-w-6xl px-4 py-12">
+  <div class="rounded-xl border-2 border-dashed border-navy-900/20 bg-white px-6 py-14 text-center">
+    <h2 class="text-xl font-extrabold">No events are listed yet</h2>
+    <p class="mx-auto mt-2 max-w-md text-sm text-navy-700">Be the first to tell Kenya what's happening. Every listing is checked before it goes live.</p>
+    <a href="{% url 'core:share_event' %}" class="btn btn-primary mt-5">Share an event</a>
+  </div>
+</section>
+{% endif %}
+{% include "partials/_event_section.html" with title="Featured events" blurb="Picked by the KULOSA team." events=featured more_url=explore_url %}
+{% include "partials/_event_section.html" with title="Trending" blurb="Getting the most attention right now." events=trending %}
+{% include "partials/_event_section.html" with title="Coming this week" events=this_week %}
+{% include "partials/_event_section.html" with title="Recently added" events=recent more_url=explore_url %}
+
+<section class="mx-auto mt-6 max-w-6xl px-4">
+  <div class="grid overflow-hidden rounded-2xl bg-navy-900 text-white on-navy md:grid-cols-2">
+    <div class="p-8 md:p-10">
+      <h2 class="text-2xl font-extrabold tracking-tight">Organizing something?</h2>
+      <p class="mt-3 max-w-md text-white/80">List your concert, match, workshop or fundraiser, add your poster, and link to wherever you sell tickets. Every listing is checked before it goes live.</p>
+      <a href="{% url 'core:share_event' %}" class="btn btn-primary mt-6">Share your event</a>
+    </div>
+    <div class="poster poster-festival min-h-[10rem]" aria-hidden="true"></div>
+  </div>
+</section>
+
+<section class="mx-auto mt-10 max-w-6xl px-4" aria-labelledby="news-heading">
+  <div class="rounded-2xl bg-paper-dark p-8">
+    <h2 id="news-heading" class="text-xl font-extrabold">Get the weekly list</h2>
+    <p class="mt-1 text-sm text-navy-700">A short email of what's on in Kenya each week. Not active yet.</p>
+    <form class="mt-4 flex flex-col gap-3 sm:flex-row" onsubmit="return false;">
+      <fieldset disabled class="flex w-full flex-col gap-3 sm:flex-row">
+        <label for="news-email" class="sr-only">Email address</label>
+        <input id="news-email" type="email" class="field sm:max-w-sm" placeholder="you@example.com">
+        <button type="button" class="btn btn-dark opacity-60">Notify me</button>
+      </fieldset>
+    </form>
+  </div>
+</section>
+{% endblock %}

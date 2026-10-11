@@ -1,0 +1,15 @@
+{# Usage: include with title, events, optional blurb and more_url #}
+{% if events %}
+<section class="mx-auto max-w-6xl px-4 py-10" aria-labelledby="sec-{{ title|slugify }}">
+  <div class="mb-5 flex items-end justify-between gap-4">
+    <div>
+      <h2 id="sec-{{ title|slugify }}" class="text-2xl font-extrabold tracking-tight">{{ title }}</h2>
+      {% if blurb %}<p class="mt-1 text-sm text-navy-700">{{ blurb }}</p>{% endif %}
+    </div>
+    {% if more_url %}<a href="{{ more_url }}" class="shrink-0 text-sm font-semibold text-flame-600 hover:underline">See all</a>{% endif %}
+  </div>
+  <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    {% for event in events %}{% include "partials/_event_card.html" %}{% endfor %}
+  </div>
+</section>
+{% endif %}

@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}{{ event.title }} | KULOSA{% endblock %}
+{% block meta_description %}{{ event.summary }}{% endblock %}
+{% block head_extra %}
+  <link rel="canonical" href="{{ canonical }}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="KULOSA">
+  <meta property="og:title" content="{{ event.title }}">
+  <meta property="og:description" content="{{ event.summary }}">
+  <meta property="og:url" content="{{ canonical }}">
+  {% if image_url %}<meta property="og:image" content="{{ image_url }}">{% endif %}
+  <meta name="twitter:card" content="{% if image_url %}summary_large_image{% else %}summary{% endif %}">
+  {% if jsonld %}<script type="application/ld+json">{{ jsonld }}</script>{% endif %}
+{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-6xl px-4 py-8">
+  <nav aria-label="Breadcrumb" class="mb-4 text-sm text-navy-700">
+    <a class="hover:underline" href="{% url 'events:explore' %}">Explore events</a>
+    <span aria-hidden="true">/</span>
+    <a class="hover:underline" href="{% url 'events:explore' %}?category={{ event.category.slug }}">{{ event.category.name }}</a>
+  </nav>
+
+  {% if is_preview %}
+    <div class="mb-6 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900" role="note"><strong>Preview.</strong> This event is {{ event.get_status_display|lower }} and only you{% if user.is_staff %} and other staff{% endif %} can see this page.</div>
+  {% endif %}
+  {% if event.is_cancelled %}
+    <div class="mb-6 rounded-lg bg-red-600 px-5 py-4 text-white" role="alert"><p class="text-lg font-extrabold">This event has been cancelled</p><p class="text-sm text-white/90">Check with the organizer for refunds or a new date. Don't travel based on this listing.</p></div>
+  {% elif event.status == "COMPLETED" or event.has_ended and not is_preview %}
+    <div class="mb-6 rounded-lg bg-slate-700 px-5 py-3 text-white" role="note"><p class="font-bold">This event has ended.</p></div>
+  {% endif %}
+
+  <div class="grid gap-8 lg:grid-cols-3">
+    <div class="lg:col-span-2">
+      {% if event.cover_image %}
+        <img src="{{ event.cover_image.url }}" alt="Poster for {{ event.title }}" class="aspect-[16/9] w-full rounded-xl object-cover ring-1 ring-navy-900/10">
+      {% else %}
+        <div class="poster poster-{{ event.category.poster_style }} aspect-[16/9] w-full rounded-xl ring-1 ring-navy-900/10" role="img" aria-label="No poster uploaded for {{ event.title }}"></div>
+      {% endif %}
+
+      <div class="mt-6 flex flex-wrap items-center gap-2">
+        <span class="badge badge-paid">{{ event.category.name }}</span>
+        {% if event.event_type != "PHYSICAL" %}<span class="badge badge-paid">{{ event.get_event_type_display }}</span>{% endif %}
+      </div>
+      <h1 class="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">{{ event.title }}</h1>
+      <p class="mt-2 text-lg text-navy-700">{{ event.summary }}</p>
+
+      <h2 class="mt-8 text-lg font-bold">About this event</h2>
+      <div class="mt-2 max-w-prose space-y-3 text-navy-800">{{ event.description|linebreaks }}</div>
+
+      {% if event.organizer %}
+      <h2 class="mt-8 text-lg font-bold">Organizer</h2>
+      <div class="mt-3 flex gap-4 rounded-xl bg-white p-4 ring-1 ring-navy-900/10">
+        {% if event.organizer.logo %}<img src="{{ event.organizer.logo.url }}" alt="" class="h-14 w-14 shrink-0 rounded-lg object-cover">{% endif %}
+        <div class="min-w-0">
+          <p class="font-bold"><a class="hover:underline" href="{% url 'organizer_public' event.organizer.slug %}">{{ event.organizer.name }}</a>{% if event.organizer.is_verified %} <span class="badge badge-free align-middle">Verified</span>{% endif %}</p>
+          {% if event.organizer.description %}<p class="mt-1 text-sm text-navy-700">{{ event.organizer.description|truncatechars:240 }}</p>{% endif %}
+          <p class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+            {% if event.organizer.contact_email %}<a class="text-flame-600 hover:underline" href="mailto:{{ event.organizer.contact_email }}">{{ event.organizer.contact_email }}</a>{% endif %}
+            {% if event.organizer.contact_phone %}<a class="text-flame-600 hover:underline" href="tel:{{ event.organizer.contact_phone }}">{{ event.organizer.contact_phone }}</a>{% endif %}
+            {% if event.organizer.website %}<a class="text-flame-600 hover:underline" href="{{ event.organizer.website }}" target="_blank" rel="noopener noreferrer nofollow">Website</a>{% endif %}
+          </p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <aside class="lg:col-span-1">
+      <div class="ticket lg:sticky lg:top-24">
+        <div class="space-y-4 p-5">
+          <div>
+            <h2 class="field-label">Date and time</h2>
+            <p class="font-semibold"><time datetime="{{ event.start_datetime|date:'c' }}">{{ event.start_datetime|date:"l, j F Y" }}</time></p>
+            <p class="text-sm text-navy-700">{{ event.start_datetime|date:"g:i A" }} to {{ event.end_datetime|date:"g:i A" }}{% if event.start_datetime|date:"Ymd" != event.end_datetime|date:"Ymd" %} ({{ event.end_datetime|date:"D j M" }}){% endif %} &middot; East Africa Time</p>
+          </div>
+          <div>
+            <h2 class="field-label">Where</h2>
+            {% if event.event_type == "ONLINE" %}
+              <p class="font-semibold">Online event</p>
+            {% else %}
+              <p class="font-semibold">{{ event.venue_name|default:event.address }}</p>
+              <p class="text-sm text-navy-700">{% if event.venue_name %}{{ event.address }}{% if event.address and event.town %}, {% endif %}{% endif %}{{ event.town }}{% if event.town and event.county and event.town != event.county %}, {{ event.county }}{% endif %}</p>
+              {% if event.event_type == "HYBRID" %}<p class="text-sm text-navy-700">Also available online.</p>{% endif %}
+            {% endif %}
+          </div>
+          <div>
+            <h2 class="field-label">Entry</h2>
+            {% if event.is_free %}<span class="badge badge-free">Free entry</span>{% else %}<p class="text-xl font-extrabold">KES {{ event.ticket_price|floatformat:"-2g" }}</p>{% endif %}
+          </div>
+        </div>
+        <div class="ticket-tear"></div>
+        <div class="space-y-3 p-5">
+          {% if event.booking_url and not event.is_cancelled and not event.has_ended %}
+            <a href="{{ event.booking_url }}" class="btn btn-primary w-full" target="_blank" rel="noopener noreferrer nofollow">{% if event.is_free %}Register or get details{% else %}Get tickets{% endif %}</a>
+            <p class="text-xs text-navy-700">Opens the organizer's page in a new tab. KULOSA does not sell tickets or handle payments.</p>
+          {% endif %}
+
+          {% if can_save %}
+            {% if user.is_authenticated %}
+              {% if is_saved %}
+                <form method="post" action="{% url 'events:unsave' event.slug %}">{% csrf_token %}<input type="hidden" name="next" value="{{ event.get_absolute_url }}"><button class="btn btn-dark w-full" aria-pressed="true">Saved. Click to remove</button></form>
+              {% else %}
+                <form method="post" action="{% url 'events:save' event.slug %}">{% csrf_token %}<input type="hidden" name="next" value="{{ event.get_absolute_url }}"><button class="btn btn-outline w-full" aria-pressed="false">Save event</button></form>
+              {% endif %}
+            {% else %}
+              <a class="btn btn-outline w-full" href="{% url 'accounts:login' %}?next={{ event.get_absolute_url|urlencode }}">Log in to save this event</a>
+            {% endif %}
+          {% endif %}
+
+          <div>
+            <h2 class="field-label">Share</h2>
+            <div class="flex flex-wrap gap-2">
+              <a class="btn btn-outline px-3 py-2" href="{{ share.whatsapp }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+              <a class="btn btn-outline px-3 py-2" href="{{ share.facebook }}" target="_blank" rel="noopener noreferrer">Facebook</a>
+              <a class="btn btn-outline px-3 py-2" href="{{ share.x }}" target="_blank" rel="noopener noreferrer">X</a>
+              <button type="button" class="btn btn-dark px-3 py-2" data-copy-link="{{ share.url }}">Copy link</button>
+            </div>
+            <p class="mt-2 text-xs text-navy-700" data-copy-status role="status" aria-live="polite"></p>
+          </div>
+
+          {% if can_report %}<p class="text-center text-xs"><a class="text-navy-700 underline hover:text-flame-600" href="{% url 'events:report' event.slug %}">Report this listing</a></p>
+          {% elif event.status == "PUBLISHED" and not user.is_authenticated %}<p class="text-center text-xs"><a class="text-navy-700 underline hover:text-flame-600" href="{% url 'accounts:login' %}?next={% url 'events:report' event.slug %}">Log in to report this listing</a></p>{% endif %}
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  {% if related %}
+  <section class="mt-14" aria-labelledby="related-heading">
+    <h2 id="related-heading" class="mb-5 text-2xl font-extrabold tracking-tight">You might also like</h2>
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {% for event in related %}{% include "partials/_event_card.html" %}{% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

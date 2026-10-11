@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Log in | KULOSA{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-md px-4 py-12">
+  <h1 class="text-3xl font-extrabold tracking-tight">Log in</h1>
+  <p class="mt-2 text-sm text-navy-700">New here? <a class="font-semibold text-flame-600 hover:underline" href="{% url 'accounts:register' %}">Create an account</a></p>
+  <form method="post" class="mt-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-navy-900/10" novalidate>
+    {% csrf_token %}
+    {% include "partials/_form.html" %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit" class="btn btn-primary mt-6 w-full">Log in</button>
+    <p class="mt-4 text-center text-sm"><a class="text-navy-700 hover:underline" href="{% url 'accounts:password_reset' %}">Forgot your password?</a></p>
+  </form>
+</div>
+{% endblock %}

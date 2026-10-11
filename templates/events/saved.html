@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Saved events | KULOSA{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-6xl px-4 py-10">
+  <h1 class="text-3xl font-extrabold tracking-tight">Saved events</h1>
+  {% if events %}
+  <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {% for event in events %}
+    <div>
+      {% include "partials/_event_card.html" %}
+      <form method="post" action="{% url 'events:unsave' event.slug %}" class="mt-2">{% csrf_token %}<input type="hidden" name="next" value="{% url 'saved_events' %}"><button class="text-sm text-navy-700 underline hover:text-red-700">Remove from saved</button></form>
+    </div>
+    {% endfor %}
+  </div>
+  {% if page.has_other_pages %}
+  <nav class="mt-8 flex items-center justify-between" aria-label="Pagination">
+    {% if page.has_previous %}<a class="btn btn-outline" href="?page={{ page.previous_page_number }}">Previous</a>{% else %}<span></span>{% endif %}
+    <span class="text-sm text-navy-700">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+    {% if page.has_next %}<a class="btn btn-outline" href="?page={{ page.next_page_number }}">Next</a>{% else %}<span></span>{% endif %}
+  </nav>
+  {% endif %}
+  {% else %}
+  <div class="mt-6 rounded-xl border-2 border-dashed border-navy-900/20 bg-white px-6 py-14 text-center">
+    <h2 class="text-lg font-bold">Nothing saved yet</h2>
+    <p class="mx-auto mt-2 max-w-md text-sm text-navy-700">Use "Save event" on any event page to keep it here.</p>
+    <a href="{% url 'events:explore' %}" class="btn btn-primary mt-5">Explore events</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

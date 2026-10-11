@@ -1,0 +1,15 @@
+{# One form field. Usage: include with field=field #}
+{% if field.field.widget.input_type == "checkbox" %}
+<div>
+  <label class="flex items-start gap-2 text-sm font-medium"><span class="mt-0.5">{{ field }}</span><span>{{ field.label }}</span></label>
+  {% if field.help_text %}<div class="mt-1 text-xs text-navy-700">{{ field.help_text|safe }}</div>{% endif %}
+  {% for error in field.errors %}<p class="mt-1 text-sm font-medium text-red-700" role="alert">{{ error }}</p>{% endfor %}
+</div>
+{% else %}
+<div data-field="{{ field.name }}">
+  <label for="{{ field.id_for_label }}" class="field-label">{{ field.label }}{% if not field.field.required %} (optional){% endif %}</label>
+  {{ field }}
+  {% if field.help_text %}<div class="mt-1 text-xs text-navy-700">{{ field.help_text|safe }}</div>{% endif %}
+  {% for error in field.errors %}<p class="mt-1 text-sm font-medium text-red-700" role="alert">{{ error }}</p>{% endfor %}
+</div>
+{% endif %}

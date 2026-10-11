@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Create an account | KULOSA{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-md px-4 py-12">
+  <h1 class="text-3xl font-extrabold tracking-tight">Create your account</h1>
+  <p class="mt-2 text-sm text-navy-700">Already have one? <a class="font-semibold text-flame-600 hover:underline" href="{% url 'accounts:login' %}">Log in</a></p>
+  <form method="post" class="mt-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-navy-900/10" novalidate>
+    {% csrf_token %}
+    {% include "partials/_form.html" %}
+    <button type="submit" class="btn btn-primary mt-6 w-full">Create account</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}My events | KULOSA{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-6xl px-4 py-10">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-extrabold tracking-tight">My events</h1>
+      <p class="mt-1 text-sm text-navy-700">Every event is reviewed before it goes live.</p>
+    </div>
+    <div class="flex flex-wrap gap-3">
+      <a href="{% url 'dashboard:organizer' %}" class="btn btn-outline">{% if has_organizer %}Edit organizer profile{% else %}Create organizer profile{% endif %}</a>
+      <a href="{% url 'dashboard:create' %}" class="btn btn-primary">New event</a>
+    </div>
+  </div>
+
+  <nav class="mt-6 flex flex-wrap gap-2" aria-label="Filter by status">
+    {% for value, label, count in tabs %}
+      <a href="{% url 'dashboard:list' %}{% if value %}?status={{ value }}{% endif %}"
+         class="rounded-full px-3 py-1.5 text-sm font-semibold ring-1 ring-navy-900/15 {% if value == current %}bg-navy-900 text-white{% else %}bg-white hover:bg-navy-100{% endif %}"
+         {% if value == current %}aria-current="page"{% endif %}>{{ label }} <span class="opacity-70">{{ count }}</span></a>
+    {% endfor %}
+  </nav>
+
+
+  {% if page.object_list %}
+  <ul class="mt-6 space-y-4">
+    {% for event in page.object_list %}
+    <li class="flex flex-col gap-4 rounded-xl bg-white p-4 shadow-sm ring-1 ring-navy-900/10 sm:flex-row">
+      {% if event.cover_image %}
+        <img src="{{ event.cover_image.url }}" alt="" class="h-28 w-full rounded-lg object-cover sm:w-44" loading="lazy">
+      {% else %}
+        <div class="poster h-28 w-full rounded-lg sm:w-44" aria-hidden="true"></div>
+      {% endif %}
+      <div class="min-w-0 flex-1">
+        <div class="flex flex-wrap items-center gap-2">
+          <h2 class="text-lg font-bold"><a class="hover:underline" href="{{ event.get_absolute_url }}">{{ event.title }}</a></h2>
+          <span class="badge {{ event.badge_class }}">{{ event.get_status_display }}</span>
+        </div>
+        <p class="mt-1 text-sm text-navy-700">{{ event.category.name }} &middot; <time datetime="{{ event.start_datetime|date:'c' }}">{{ event.start_datetime|date:"D j M Y, g:i A" }}</time>{% if event.town %} &middot; {{ event.town }}{% endif %}</p>
+        {% if event.status == "REJECTED" and event.moderation_note %}
+          <div class="mt-3 rounded-lg bg-red-50 p-3 text-sm text-red-900"><p class="font-semibold">Changes needed</p><p class="mt-1 whitespace-pre-line">{{ event.moderation_note }}</p></div>
+        {% elif event.status == "PENDING" %}
+          <p class="mt-2 text-sm text-amber-900">Waiting for review{% if event.submitted_at %} since {{ event.submitted_at|date:"j M, g:i A" }}{% endif %}.</p>
+        {% endif %}
+      </div>
+      <div class="flex shrink-0 flex-wrap items-start gap-2 sm:w-44 sm:flex-col">
+        {% if event.status == "DRAFT" or event.status == "REJECTED" %}
+          <a class="btn btn-outline w-full py-2" href="{% url 'dashboard:edit' event.pk %}">{% if event.status == "REJECTED" %}Fix and resubmit{% else %}Edit{% endif %}</a>
+          <form method="post" action="{% url 'dashboard:submit' event.pk %}" class="w-full">{% csrf_token %}<button class="btn btn-primary w-full py-2">Submit for review</button></form>
+          <form method="post" action="{% url 'dashboard:delete' event.pk %}" class="w-full" onsubmit="return confirm('Delete this event? This can\'t be undone.');">{% csrf_token %}<button class="btn w-full py-2 text-red-700 hover:bg-red-50">Delete</button></form>
+        {% elif event.status == "PENDING" %}
+          <a class="btn btn-outline w-full py-2" href="{% url 'dashboard:edit' event.pk %}">Edit</a>
+          <form method="post" action="{% url 'dashboard:withdraw' event.pk %}" class="w-full">{% csrf_token %}<button class="btn btn-outline w-full py-2">Withdraw</button></form>
+        {% elif event.status == "PUBLISHED" %}
+          <a class="btn btn-outline w-full py-2" href="{% url 'dashboard:edit' event.pk %}">Edit</a>
+          <form method="post" action="{% url 'dashboard:cancel' event.pk %}" class="w-full" onsubmit="return confirm('Cancel this event? Attendees will see a cancellation notice.');">{% csrf_token %}<button class="btn w-full py-2 text-red-700 hover:bg-red-50">Cancel event</button></form>
+        {% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+
+  {% if page.has_other_pages %}
+  <nav class="mt-8 flex items-center justify-between" aria-label="Pagination">
+    {% if page.has_previous %}<a class="btn btn-outline" href="?{% if current %}status={{ current }}&amp;{% endif %}page={{ page.previous_page_number }}">Previous</a>{% else %}<span></span>{% endif %}
+    <span class="text-sm text-navy-700">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+    {% if page.has_next %}<a class="btn btn-outline" href="?{% if current %}status={{ current }}&amp;{% endif %}page={{ page.next_page_number }}">Next</a>{% else %}<span></span>{% endif %}
+  </nav>
+  {% endif %}
+  {% else %}
+  <div class="mt-6 rounded-xl border-2 border-dashed border-navy-900/20 bg-white px-6 py-14 text-center">
+    <h2 class="text-lg font-bold">{% if current %}No {{ current|lower }} events{% else %}You haven't shared an event yet{% endif %}</h2>
+    <p class="mx-auto mt-2 max-w-md text-sm text-navy-700">Add the details and a poster, then submit it for review.</p>
+    <a href="{% url 'dashboard:create' %}" class="btn btn-primary mt-5">Share your first event</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
