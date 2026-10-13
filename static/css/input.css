@@ -4,7 +4,10 @@
 
 @layer base {
   html { scroll-behavior: smooth; }
-  body { @apply bg-paper font-sans text-navy-900 antialiased; }
+  body {
+    @apply bg-paper font-sans text-navy-900 antialiased;
+    background-image: radial-gradient(circle at top, rgba(255, 90, 31, 0.06), transparent 26%), radial-gradient(circle at bottom left, rgba(17, 24, 39, 0.04), transparent 22%);
+  }
   :focus-visible { @apply outline outline-2 outline-offset-2 outline-flame-500; }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -13,27 +16,37 @@
 }
 
 @layer components {
-  /* Buttons */
-  .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors; }
-  .btn-primary { @apply bg-flame-500 text-navy-950 hover:bg-flame-600 hover:text-white; }
+  .nav-link {
+    @apply relative text-white/80 transition hover:text-flame-500;
+  }
+  .nav-link[aria-current="page"] {
+    @apply text-flame-500;
+  }
+  .nav-link[aria-current="page"]::after {
+    content: "";
+    @apply absolute -bottom-2 left-0 h-0.5 w-full rounded-full bg-flame-500;
+  }
+
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-200; }
+  .btn:hover { @apply -translate-y-0.5; }
+  .btn-primary { @apply bg-flame-500 text-navy-950 shadow-sm shadow-flame-500/30 hover:bg-flame-600 hover:text-white; }
   .btn-dark { @apply bg-navy-900 text-white hover:bg-navy-700; }
   .btn-outline { @apply border border-navy-900/25 text-navy-900 hover:bg-navy-900 hover:text-white; }
   .btn-outline-light { @apply border border-white/40 text-white hover:bg-white hover:text-navy-900; }
 
-  /* Form controls */
   .field-label { @apply mb-1 block text-xs font-semibold text-navy-700; }
-  .field { @apply w-full rounded-lg border border-navy-900/20 bg-white px-3 py-2.5 text-sm text-navy-900 placeholder:text-navy-700/60; }
+  .field {
+    @apply w-full rounded-lg border border-navy-900/20 bg-white px-3 py-2.5 text-sm text-navy-900 placeholder:text-navy-700/60 transition focus:border-flame-500 focus:outline-none focus:ring-2 focus:ring-flame-100;
+  }
 
-  /* Badges */
   .badge { @apply inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold; }
   .badge-free { @apply bg-emerald-100 text-emerald-900; }
   .badge-paid { @apply bg-navy-100 text-navy-900; }
   .badge-demo { @apply bg-flame-100 text-flame-600; }
 
-  /* Wordmark fallback (no logo file needed) */
   .wordmark { @apply inline-flex items-center gap-2 text-xl font-extrabold tracking-tight; }
   .wordmark-mark {
-    @apply relative inline-block h-7 w-7 rounded-md bg-flame-500;
+    @apply relative inline-block h-7 w-7 rounded-md bg-flame-500 shadow-sm shadow-flame-500/30;
   }
   .wordmark-mark::before, .wordmark-mark::after {
     content: ""; @apply absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-navy-900;
@@ -42,11 +55,10 @@
   .wordmark-mark::after { right: -4px; }
   .on-navy .wordmark-mark::before, .on-navy .wordmark-mark::after { @apply bg-navy-900; }
 
-  /* ---- Ticket card: the signature element ---- */
-  .ticket { @apply relative flex flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-navy-900/10 transition-shadow hover:shadow-md; }
+  .ticket { @apply relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-navy-900/10 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:ring-navy-900/15; }
   .ticket-poster { @apply relative aspect-[16/10] w-full; }
   .ticket-stub {
-    @apply absolute left-3 top-3 flex w-14 flex-col items-center rounded-md bg-white py-1.5 text-navy-900 shadow;
+    @apply absolute left-3 top-3 flex w-14 flex-col items-center rounded-md bg-white py-1.5 text-navy-900 shadow-md;
   }
   .ticket-tear {
     @apply relative h-0 border-t-2 border-dashed border-navy-900/20;
@@ -58,7 +70,6 @@
   .ticket-tear::before { left: -12px; }
   .ticket-tear::after { right: -12px; }
 
-  /* Poster placeholders by category (no images in Phase 1) */
   .poster { background-color: #13294B; }
   .poster-music    { background: radial-gradient(circle at 80% 20%, #FF5A1F 0 18%, transparent 19%), repeating-radial-gradient(circle at 80% 20%, rgba(255,255,255,.12) 0 2px, transparent 2px 14px), #1D3A66; }
   .poster-sports   { background: repeating-linear-gradient(115deg, rgba(255,255,255,.1) 0 14px, transparent 14px 28px), #0F6B4F; }
