@@ -166,7 +166,11 @@ class Event(models.Model):
         ]
         constraints = [
             models.CheckConstraint(condition=Q(end_datetime__gt=models.F("start_datetime")), name="event_end_after_start"),
-            models.CheckConstraint(condition=Q(is_free=True) | Q(ticket_price__isnull=False), name="event_paid_needs_price"),
+            models.CheckConstraint(
+                condition=(Q(is_free=True) & Q(ticket_price__isnull=True))
+                | (Q(is_free=False) & Q(ticket_price__isnull=False) & Q(ticket_price__gte=Decimal("0"))),
+                name="event_paid_price_rules",
+            ),
         ]
 
     def __str__(self):
@@ -176,6 +180,8 @@ class Event(models.Model):
         errors = {}
         if self.start_datetime and self.end_datetime and self.end_datetime <= self.start_datetime:
             errors["end_datetime"] = "The end time must be after the start time."
+        if self.ticket_price is not None and self.ticket_price < 0:
+            errors["ticket_price"] = "Ticket price cannot be negative."
         if not self.is_free and self.ticket_price is None:
             errors["ticket_price"] = "Enter a ticket price, or mark the event as free."
         if self.is_free:

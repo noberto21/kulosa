@@ -37,6 +37,14 @@ class EventConstraintTests(Base):
         with self.assertRaises(IntegrityError), transaction.atomic():
             self.make_event(is_free=False, ticket_price=None)
 
+    def test_negative_ticket_price_is_rejected(self):
+        e = self.make_event(is_free=False, ticket_price=Decimal("25"))
+        e.ticket_price = Decimal("-1")
+        with self.assertRaises(ValidationError):
+            e.full_clean()
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            Event.objects.filter(pk=e.pk).update(ticket_price=Decimal("-1"))
+
     def test_full_clean_reports_friendly_errors(self):
         e = Event(title="x", summary="s", description="d", category=self.cat, owner=self.owner,
                   start_datetime=self.start, end_datetime=self.start - timedelta(hours=1), is_free=False, venue_name="V")
