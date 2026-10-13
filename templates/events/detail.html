@@ -71,6 +71,12 @@
             <h2 class="field-label">Date and time</h2>
             <p class="font-semibold"><time datetime="{{ event.start_datetime|date:'c' }}">{{ event.start_datetime|date:"l, j F Y" }}</time></p>
             <p class="text-sm text-navy-700">{{ event.start_datetime|date:"g:i A" }} to {{ event.end_datetime|date:"g:i A" }}{% if event.start_datetime|date:"Ymd" != event.end_datetime|date:"Ymd" %} ({{ event.end_datetime|date:"D j M" }}){% endif %} &middot; East Africa Time</p>
+            {% if calendar_url and not event.is_cancelled and not event.has_ended %}
+              <a href="{{ calendar_url }}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-flame-600 hover:underline">
+                <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75z" clip-rule="evenodd"/></svg>
+                Add to Google Calendar
+              </a>
+            {% endif %}
           </div>
           <div>
             <h2 class="field-label">Where</h2>
@@ -79,7 +85,13 @@
             {% else %}
               <p class="font-semibold">{{ event.venue_name|default:event.address }}</p>
               <p class="text-sm text-navy-700">{% if event.venue_name %}{{ event.address }}{% if event.address and event.town %}, {% endif %}{% endif %}{{ event.town }}{% if event.town and event.county and event.town != event.county %}, {{ event.county }}{% endif %}</p>
-              {% if event.event_type == "HYBRID" %}<p class="text-sm text-navy-700">Also available online.</p>{% endif %}
+              {% if maps_url %}
+                <a href="{{ maps_url }}" target="_blank" rel="noopener noreferrer nofollow" class="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-flame-600 hover:underline">
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433 1.244-.77 2.879-1.958 4.43-3.58 2.05-2.146 3.198-4.592 3.198-6.772 0-4.418-3.582-8-8-8s-8 3.582-8 8c0 2.18 1.148 4.626 3.198 6.772 1.55 1.622 3.186 2.81 4.43 3.58.31.193.57.337.757.433a5.742 5.742 0 00.299.148zm.31-7.933a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+                  Open in Google Maps
+                </a>
+              {% endif %}
+              {% if event.event_type == "HYBRID" %}<p class="mt-1 text-xs text-navy-700">Also available online.</p>{% endif %}
             {% endif %}
           </div>
           <div>
@@ -109,10 +121,13 @@
           <div>
             <h2 class="field-label">Share</h2>
             <div class="flex flex-wrap gap-2">
-              <a class="btn btn-outline px-3 py-2" href="{{ share.whatsapp }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-              <a class="btn btn-outline px-3 py-2" href="{{ share.facebook }}" target="_blank" rel="noopener noreferrer">Facebook</a>
-              <a class="btn btn-outline px-3 py-2" href="{{ share.x }}" target="_blank" rel="noopener noreferrer">X</a>
-              <button type="button" class="btn btn-dark px-3 py-2" data-copy-link="{{ share.url }}">Copy link</button>
+              <a class="btn border border-[#25D366] bg-[#25D366] text-white hover:bg-[#20ba5a] px-3 py-2 text-xs" href="{{ share.whatsapp }}" target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.63C8.75 21.41 10.38 21.82 12.04 21.82C17.5 21.82 21.95 17.37 21.95 11.91C21.95 6.45 17.5 2 12.04 2M12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.8 13.47 3.8 11.91C3.8 7.37 7.5 3.67 12.04 3.67C16.58 3.67 20.28 7.37 20.28 11.91C20.28 16.46 16.58 20.15 12.04 20.15M16.57 14.33C16.32 14.2 15.1 13.6 14.88 13.52C14.65 13.43 14.49 13.39 14.33 13.64C14.16 13.88 13.69 14.44 13.54 14.6C13.4 14.77 13.25 14.79 13 14.67C12.75 14.54 11.95 14.28 11 13.44C10.26 12.78 9.76 11.97 9.62 11.72C9.47 11.47 9.6 11.34 9.73 11.21C9.84 11.1 9.98 10.92 10.11 10.77C10.23 10.62 10.27 10.51 10.35 10.35C10.43 10.18 10.39 10.04 10.33 9.92C10.27 9.79 9.77 8.58 9.57 8.08C9.37 7.6 9.17 7.66 9.02 7.66C8.88 7.65 8.71 7.65 8.55 7.65C8.38 7.65 8.12 7.71 7.9 7.95C7.67 8.2 7.03 8.8 7.03 10.02C7.03 11.24 7.92 12.42 8.04 12.58C8.16 12.75 9.78 15.25 12.27 16.32C14.34 17.21 14.76 17.03 15.22 17C15.73 16.96 16.85 16.35 17.08 15.7C17.31 15.05 17.31 14.5 17.25 14.38C17.18 14.28 17.03 14.21 16.57 14.09V14.33Z"/></svg>
+                WhatsApp
+              </a>
+              <a class="btn btn-outline px-3 py-2 text-xs" href="{{ share.facebook }}" target="_blank" rel="noopener noreferrer">Facebook</a>
+              <a class="btn btn-outline px-3 py-2 text-xs" href="{{ share.x }}" target="_blank" rel="noopener noreferrer">X</a>
+              <button type="button" class="btn btn-dark px-3 py-2 text-xs" data-copy-link="{{ share.url }}">Copy link</button>
             </div>
             <p class="mt-2 text-xs text-navy-700" data-copy-status role="status" aria-live="polite"></p>
           </div>
@@ -131,6 +146,33 @@
       {% for event in related %}{% include "partials/_event_card.html" %}{% endfor %}
     </div>
   </section>
+  {% endif %}
+
+  {% if not event.is_cancelled and not event.has_ended and is_published %}
+  <div class="fixed bottom-0 inset-x-0 z-30 border-t border-navy-900/10 bg-white/95 p-3 backdrop-blur-md shadow-[0_-4px_16px_rgba(0,0,0,0.08)] lg:hidden">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-3">
+      <div>
+        <span class="block text-xs font-semibold text-navy-700">Admission</span>
+        {% if event.is_free %}
+          <span class="badge badge-free">Free entry</span>
+        {% else %}
+          <span class="text-base font-extrabold text-navy-900">KES {{ event.ticket_price|floatformat:"-2g" }}</span>
+        {% endif %}
+      </div>
+      <div class="flex items-center gap-2">
+        {% if can_save and user.is_authenticated %}
+          {% if is_saved %}
+            <form method="post" action="{% url 'events:unsave' event.slug %}">{% csrf_token %}<input type="hidden" name="next" value="{{ event.get_absolute_url }}"><button class="btn btn-dark py-2 text-xs" title="Remove from saved">Saved</button></form>
+          {% else %}
+            <form method="post" action="{% url 'events:save' event.slug %}">{% csrf_token %}<input type="hidden" name="next" value="{{ event.get_absolute_url }}"><button class="btn btn-outline py-2 text-xs" title="Save event">Save</button></form>
+          {% endif %}
+        {% endif %}
+        {% if event.booking_url %}
+          <a href="{{ event.booking_url }}" class="btn btn-primary py-2 text-xs" target="_blank" rel="noopener noreferrer nofollow">{% if event.is_free %}Register{% else %}Get tickets{% endif %}</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
   {% endif %}
 </div>
 {% endblock %}

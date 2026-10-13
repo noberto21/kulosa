@@ -1,3 +1,4 @@
+from datetime import timezone as dt_timezone
 from urllib.parse import quote
 
 from django.contrib import messages
@@ -68,9 +69,31 @@ def detail(request, slug):
         "x": f"https://twitter.com/intent/tweet?text={text}&url={quote(url, safe='')}",
     }
     is_published = event.status == Event.Status.PUBLISHED
+
+    start_utc = event.start_datetime.astimezone(dt_timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    end_utc = event.end_datetime.astimezone(dt_timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    loc_parts = [p for p in [event.venue_name, event.address, event.town, event.county] if p]
+    loc_str = ", ".join(loc_parts) if event.event_type != Event.EventType.ONLINE else "Online"
+    calendar_url = (
+        f"https://calendar.google.com/calendar/render?action=TEMPLATE"
+        f"&text={quote(event.title)}"
+        f"&dates={start_utc}/{end_utc}"
+        f"&details={quote(event.summary or event.title)}"
+        f"&location={quote(loc_str)}"
+    )
+
+    maps_url = ""
+    if event.event_type != Event.EventType.ONLINE:
+        if event.latitude is not None and event.longitude is not None:
+            maps_url = f"https://www.google.com/maps/search/?api=1&query={event.latitude},{event.longitude}"
+        elif loc_str:
+            maps_url = f"https://www.google.com/maps/search/?api=1&query={quote(loc_str + ', Kenya')}"
+
     return render(request, "events/detail.html", {
         "event": event,
         "share": share,
+        "calendar_url": calendar_url,
+        "maps_url": maps_url,
         "image_url": image_url,
         "canonical": url,
         "jsonld": event_jsonld(event, url, image_url) if event.is_public else "",
