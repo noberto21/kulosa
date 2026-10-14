@@ -1,8 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}KULOSA | Discover what's happening near you in Kenya{% endblock %}
 {% block content %}
 
 <section class="relative overflow-hidden bg-navy-900 text-white on-navy">
+  <img src="{% static 'images/home-event-crowd.jpg' %}" alt="" aria-hidden="true" fetchpriority="high" class="absolute inset-0 h-full w-full object-cover object-center">
+  <div class="absolute inset-0 bg-gradient-to-r from-navy-950/95 via-navy-900/80 to-navy-900/45"></div>
   <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,90,31,0.25),transparent_38%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.18),transparent_35%)]"></div>
   <div class="relative mx-auto grid max-w-6xl gap-8 px-4 py-14 lg:grid-cols-5 lg:items-center lg:py-20">
     <div class="lg:col-span-3">
