@@ -1,19 +1,100 @@
 {% extends "base.html" %}
 {% block title %}My account | KULOSA{% endblock %}
 {% block content %}
-<div class="mx-auto max-w-3xl px-4 py-12">
-  <h1 class="text-3xl font-extrabold tracking-tight">Hi, {{ user.get_short_name }}</h1>
-  <dl class="mt-6 divide-y divide-navy-900/10 rounded-xl bg-white shadow-sm ring-1 ring-navy-900/10">
-    <div class="px-5 py-4"><dt class="field-label">Name</dt><dd>{{ user.full_name }}</dd></div>
-    <div class="px-5 py-4"><dt class="field-label">Email</dt><dd>{{ user.email }}</dd></div>
-    <div class="px-5 py-4"><dt class="field-label">Phone</dt><dd>{{ user.phone|default:"Not added" }}</dd></div>
-  </dl>
-  <div class="mt-6 flex flex-wrap gap-3">
-    <a href="{% url 'dashboard:list' %}" class="btn btn-primary">My events</a>
-    <a href="{% url 'saved_events' %}" class="btn btn-outline">Saved events</a>
-    <a href="{% url 'accounts:profile_edit' %}" class="btn btn-outline">Edit profile</a>
-    <a href="{% url 'accounts:password_change' %}" class="btn btn-outline">Change password</a>
-    <a href="{% url 'events:explore' %}" class="btn btn-outline">Explore events</a>
+<div class="mx-auto max-w-6xl px-4 py-10 sm:py-12">
+  <section class="relative overflow-hidden rounded-3xl bg-navy-900 px-6 py-8 text-white shadow-xl sm:px-10 sm:py-10" aria-labelledby="account-heading">
+    <div class="pointer-events-none absolute -right-12 -top-24 h-64 w-64 rounded-full border-[32px] border-white/5" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute -bottom-32 right-32 h-64 w-64 rounded-full bg-flame-500/10 blur-2xl" aria-hidden="true"></div>
+    <div class="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex items-center gap-4 sm:gap-5">
+        <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-flame-500 text-2xl font-extrabold text-navy-950 ring-4 ring-white/10 sm:h-20 sm:w-20 sm:text-3xl" aria-hidden="true">{{ user.get_short_name|slice:":1"|upper }}</div>
+        <div>
+          <p class="text-xs font-bold uppercase tracking-[0.2em] text-flame-500">Account overview</p>
+          <h1 id="account-heading" class="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">Welcome back, {{ user.get_short_name }}</h1>
+          <p class="mt-2 text-sm text-white/70">Manage your profile and pick up where you left off.</p>
+        </div>
+      </div>
+      <a href="{% url 'accounts:profile_edit' %}" class="btn btn-primary shrink-0 self-start sm:self-auto">Edit profile <span aria-hidden="true">&rarr;</span></a>
+    </div>
+  </section>
+
+  <div class="mt-8 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+    <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-navy-900/10 sm:p-7" aria-labelledby="profile-heading">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-[0.16em] text-flame-600">Your details</p>
+          <h2 id="profile-heading" class="mt-1 text-xl font-extrabold tracking-tight">Profile information</h2>
+        </div>
+        <span class="rounded-full bg-navy-100 px-3 py-1 text-xs font-semibold text-navy-700">Personal</span>
+      </div>
+      <dl class="mt-6 divide-y divide-navy-900/10">
+        <div class="py-4 first:pt-0">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-navy-700">Full name</dt>
+          <dd class="mt-1 break-words text-sm font-semibold">{{ user.full_name }}</dd>
+        </div>
+        <div class="py-4">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-navy-700">Email address</dt>
+          <dd class="mt-1 break-all text-sm font-semibold">{{ user.email }}</dd>
+        </div>
+        <div class="py-4 last:pb-0">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-navy-700">Phone number</dt>
+          <dd class="mt-1 text-sm font-semibold {% if not user.phone %}font-normal text-navy-700{% endif %}">{{ user.phone|default:"Not added" }}</dd>
+        </div>
+      </dl>
+      <a href="{% url 'accounts:profile_edit' %}" class="mt-6 inline-flex items-center gap-2 text-sm font-bold text-flame-600 transition hover:text-flame-700">Update your details <span aria-hidden="true">&rarr;</span></a>
+    </section>
+
+    <section aria-labelledby="shortcuts-heading">
+      <div class="mb-4">
+        <p class="text-xs font-bold uppercase tracking-[0.16em] text-flame-600">Make it yours</p>
+        <h2 id="shortcuts-heading" class="mt-1 text-xl font-extrabold tracking-tight">Your KULOSA</h2>
+      </div>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <a href="{% url 'dashboard:list' %}" class="group flex min-h-28 items-center gap-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-navy-900/10 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-flame-500/40">
+          <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-flame-100 text-flame-600" aria-hidden="true">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3M4 11h16M5 5h14a1 1 0 0 1 1 1v13H4V6a1 1 0 0 1 1-1Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 16 2 2 4-4"/></svg>
+          </span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-bold">My events</span>
+            <span class="mt-1 block text-xs leading-relaxed text-navy-700">Manage the events you share</span>
+          </span>
+          <span class="text-lg text-navy-700 transition group-hover:translate-x-1 group-hover:text-flame-600" aria-hidden="true">&rarr;</span>
+        </a>
+
+        <a href="{% url 'saved_events' %}" class="group flex min-h-28 items-center gap-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-navy-900/10 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-flame-500/40">
+          <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-rose-700" aria-hidden="true">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M20.8 8.6c0 5.1-8.8 10.4-8.8 10.4S3.2 13.7 3.2 8.6A4.6 4.6 0 0 1 12 6.4a4.6 4.6 0 0 1 8.8 2.2Z"/></svg>
+          </span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-bold">Saved events</span>
+            <span class="mt-1 block text-xs leading-relaxed text-navy-700">Your bookmarked experiences</span>
+          </span>
+          <span class="text-lg text-navy-700 transition group-hover:translate-x-1 group-hover:text-flame-600" aria-hidden="true">&rarr;</span>
+        </a>
+
+        <a href="{% url 'events:explore' %}" class="group flex min-h-28 items-center gap-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-navy-900/10 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-flame-500/40">
+          <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-800" aria-hidden="true">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7" /><path stroke-linecap="round" stroke-linejoin="round" d="m16 16 4 4M8 11h6m-3-3v6"/></svg>
+          </span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-bold">Explore events</span>
+            <span class="mt-1 block text-xs leading-relaxed text-navy-700">Find your next experience</span>
+          </span>
+          <span class="text-lg text-navy-700 transition group-hover:translate-x-1 group-hover:text-flame-600" aria-hidden="true">&rarr;</span>
+        </a>
+
+        <a href="{% url 'accounts:password_change' %}" class="group flex min-h-28 items-center gap-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-navy-900/10 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-flame-500/40">
+          <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-navy-100 text-navy-900" aria-hidden="true">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="10" width="14" height="11" rx="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 10V7a4 4 0 1 1 8 0v3m-4 5v2"/></svg>
+          </span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-bold">Password &amp; security</span>
+            <span class="mt-1 block text-xs leading-relaxed text-navy-700">Keep your account secure</span>
+          </span>
+          <span class="text-lg text-navy-700 transition group-hover:translate-x-1 group-hover:text-flame-600" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </section>
   </div>
 </div>
 {% endblock %}
