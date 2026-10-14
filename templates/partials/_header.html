@@ -1,32 +1,32 @@
 {% url 'core:home' as home_url %}{% url 'events:explore' as explore_url %}
 <header class="sticky top-0 z-40 border-b border-white/10 bg-navy-900/90 text-white backdrop-blur-md on-navy shadow-sm">
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 xl:grid xl:grid-cols-[auto_minmax(0,1fr)_auto] xl:gap-6">
     <a href="{% url 'core:home' %}" class="rounded focus-visible:outline-offset-4">{% include "partials/_wordmark.html" %}</a>
 
-    <nav aria-label="Main" class="hidden items-center gap-6 text-sm font-medium lg:flex">
+    <nav aria-label="Main" class="hidden items-center justify-center gap-5 whitespace-nowrap text-sm font-medium xl:flex">
       <a href="{% url 'core:home' %}" class="nav-link" {% if request.path == home_url %}aria-current="page"{% endif %}>Home</a>
       <a href="{% url 'events:explore' %}" class="nav-link" {% if request.path == explore_url %}aria-current="page"{% endif %}>Explore Events</a>
       <a href="{% url 'core:categories' %}" class="nav-link">Categories</a>
       <a href="{% url 'core:about' %}" class="nav-link">About</a>
     </nav>
 
-    <div class="hidden items-center gap-3 lg:flex">
+    <div class="hidden shrink-0 items-center gap-3 whitespace-nowrap xl:flex xl:justify-self-end">
       {% if user.is_authenticated %}
-        <a href="{% url 'dashboard:list' %}" class="text-sm font-medium text-white/80 transition hover:text-flame-500">My events</a>
-        <a href="{% url 'saved_events' %}" class="text-sm font-medium text-white/80 transition hover:text-flame-500">Saved</a>
-        <a href="{% url 'accounts:account' %}" class="text-sm font-medium text-white/80 transition hover:text-flame-500">{{ user.get_short_name }}</a>
-        <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button type="submit" class="btn btn-outline-light py-2">Log out</button></form>
+        <a href="{% url 'dashboard:list' %}" class="shrink-0 text-sm font-medium text-white/80 transition hover:text-flame-500">My events</a>
+        <a href="{% url 'saved_events' %}" class="shrink-0 text-sm font-medium text-white/80 transition hover:text-flame-500">Saved</a>
+        <a href="{% url 'accounts:account' %}" class="shrink-0 text-sm font-medium text-white/80 transition hover:text-flame-500">{{ user.get_short_name }}</a>
+        <form class="shrink-0" method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button type="submit" class="btn btn-outline-light py-2">Log out</button></form>
       {% else %}
-        <a href="{% url 'accounts:login' %}" class="text-sm font-medium text-white/80 transition hover:text-flame-500">Login</a>
-        <a href="{% url 'accounts:register' %}" class="btn btn-outline-light py-2">Sign Up</a>
+        <a href="{% url 'accounts:login' %}" class="shrink-0 text-sm font-medium text-white/80 transition hover:text-flame-500">Login</a>
+        <a href="{% url 'accounts:register' %}" class="btn btn-outline-light shrink-0 py-2">Sign Up</a>
       {% endif %}
-      <a href="{% url 'core:share_event' %}" class="btn btn-primary py-2">Share an Event</a>
+      <a href="{% url 'core:share_event' %}" class="btn btn-primary shrink-0 whitespace-nowrap py-2">Share an Event</a>
     </div>
 
-    <button type="button" class="rounded-lg border border-white/30 bg-white/5 px-3 py-2 text-sm font-semibold transition hover:bg-white/10 lg:hidden" data-menu-toggle aria-expanded="false" aria-controls="mobile-menu">Menu</button>
+    <button type="button" class="rounded-lg border border-white/30 bg-white/5 px-3 py-2 text-sm font-semibold transition hover:bg-white/10 xl:hidden" data-menu-toggle aria-expanded="false" aria-controls="mobile-menu">Menu</button>
   </div>
 
-  <div id="mobile-menu" class="hidden border-t border-white/10 bg-navy-900/95 lg:hidden" data-menu>
+  <div id="mobile-menu" class="hidden border-t border-white/10 bg-navy-900/95 xl:hidden" data-menu>
     <nav aria-label="Mobile" class="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-3 text-sm font-medium">
       <a class="rounded px-2 py-2 text-white/85 transition hover:bg-white/10" href="{% url 'core:home' %}">Home</a>
       <a class="rounded px-2 py-2 text-white/85 transition hover:bg-white/10" href="{% url 'events:explore' %}">Explore Events</a>
