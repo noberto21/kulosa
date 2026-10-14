@@ -7,7 +7,7 @@
     <div class="pointer-events-none absolute -bottom-32 right-32 h-64 w-64 rounded-full bg-flame-500/10 blur-2xl" aria-hidden="true"></div>
     <div class="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
       <div class="flex items-center gap-4 sm:gap-5">
-        <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-flame-500 text-2xl font-extrabold text-navy-950 ring-4 ring-white/10 sm:h-20 sm:w-20 sm:text-3xl" aria-hidden="true">{{ user.get_short_name|slice:":1"|upper }}</div>
+        <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white/10 text-3xl font-semibold tracking-tight text-flame-500 ring-2 ring-flame-500/60 sm:h-20 sm:w-20 sm:text-4xl" aria-hidden="true">{{ user.get_short_name|slice:":1"|upper }}</div>
         <div>
           <p class="text-xs font-bold uppercase tracking-[0.2em] text-flame-500">Account overview</p>
           <h1 id="account-heading" class="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">Welcome back, {{ user.get_short_name }}</h1>
