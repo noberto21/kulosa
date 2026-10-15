@@ -47,7 +47,7 @@ Stack: Python, Django, SQLite, Django Templates, Tailwind CSS, vanilla JavaScrip
 
 ## What is NOT built yet
 
-- Contact, Terms and Privacy pages show a "not available yet" page. Write real ones before launch.
+- Contact and Privacy pages show a "not available yet" page. Write real ones before launch.
 - The newsletter box is a disabled placeholder.
 - Per-event timezone (all events use East Africa Time).
 - Email verification at sign-up.
