@@ -30,6 +30,10 @@ def terms(request):
     return render(request, "core/terms.html")
 
 
+def privacy(request):
+    return render(request, "core/privacy.html")
+
+
 def coming_soon(request, feature):
     return render(request, "core/coming_soon.html", {"feature": feature}, status=200)
 
