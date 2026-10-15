@@ -57,7 +57,20 @@
     </div>
   </form>
 
-  <p class="mt-6 text-sm text-navy-700" aria-live="polite">{{ total }} event{{ total|pluralize }} found</p>
+  {% if has_filters %}
+  <div class="mt-5 flex flex-wrap items-center gap-2">
+    <span class="text-xs font-semibold uppercase tracking-wider text-navy-700">Active:</span>
+    {% if params.q %}<span class="inline-flex items-center rounded-full bg-navy-100 px-3 py-1 text-xs font-semibold text-navy-900">"{{ params.q }}"</span>{% endif %}
+    {% if selected_category %}<span class="inline-flex items-center rounded-full bg-navy-100 px-3 py-1 text-xs font-semibold text-navy-900">{{ selected_category.name }}</span>{% endif %}
+    {% if params.location %}<span class="inline-flex items-center rounded-full bg-navy-100 px-3 py-1 text-xs font-semibold text-navy-900">{{ params.location }}</span>{% endif %}
+    {% if params.when %}<span class="inline-flex items-center rounded-full bg-navy-100 px-3 py-1 text-xs font-semibold text-navy-900">{{ params.when|capfirst }}</span>{% endif %}
+    {% if params.on %}<span class="inline-flex items-center rounded-full bg-navy-100 px-3 py-1 text-xs font-semibold text-navy-900">{{ params.on }}</span>{% endif %}
+    {% if params.price %}<span class="inline-flex items-center rounded-full bg-navy-100 px-3 py-1 text-xs font-semibold text-navy-900">{{ params.price|capfirst }}</span>{% endif %}
+    <a href="{% url 'events:explore' %}" class="inline-flex items-center rounded-full border border-navy-900/20 bg-white px-2.5 py-1 text-xs font-semibold text-flame-600 hover:border-flame-500 hover:text-flame-700">Clear all</a>
+  </div>
+  {% endif %}
+
+  <p class="mt-5 text-sm text-navy-700" aria-live="polite">{{ total }} event{{ total|pluralize }} found</p>
 
   {% if page.object_list %}
   <div class="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

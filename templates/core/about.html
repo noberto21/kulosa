@@ -1,13 +1,104 @@
 {% extends "base.html" %}
 {% block title %}About KULOSA{% endblock %}
-{% block meta_description %}KULOSA helps people in Kenya find events and helps organizers share them.{% endblock %}
+{% block meta_description %}KULOSA helps people in Kenya discover live events and gives organizers a trusted place to share them.{% endblock %}
 {% block content %}
-<div class="mx-auto max-w-3xl px-4 py-12">
-  <h1 class="text-3xl font-extrabold tracking-tight">About KULOSA</h1>
-  <div class="mt-6 space-y-4 text-navy-800">
-    <p>KULOSA helps people in Kenya find things to do, from concerts and matches to campus nights and community days, and helps organizers get the word out.</p>
-    <p>Anyone can browse. Registered users will be able to submit events, and each submission is reviewed before it is published. Tickets are sold by organizers and their chosen ticketing partners; KULOSA links to them and does not process payments.</p>
-  </div>
-  <a href="{% url 'events:explore' %}" class="btn btn-primary mt-8">Explore events</a>
+{% load static %}
+<div class="mx-auto max-w-7xl px-4 py-10 text-navy-900 sm:py-14">
+  <section class="overflow-hidden rounded-[28px] bg-navy-900 text-white shadow-2xl shadow-navy-950/20">
+    <div class="grid gap-8 px-5 py-6 sm:px-8 sm:py-8 xl:grid-cols-[1.4fr_0.8fr] xl:px-10 xl:py-10">
+      <div>
+        <div class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white/75">
+          <span class="h-2 w-2 rounded-full bg-flame-500"></span>
+          Kenya’s event hub
+        </div>
+        <div class="mt-5 flex items-center gap-4">
+          <img src="{% static 'images/logo.png' %}" alt="Kulosa logo" class="h-14 w-14 rounded-2xl shadow-lg ring-1 ring-white/20" width="56" height="56">
+          <h1 class="text-3xl font-extrabold tracking-[-0.04em] sm:text-4xl">About KULOSA</h1>
+        </div>
+        <p class="mt-5 max-w-2xl text-base leading-7 text-white/80 sm:text-lg">
+          KULOSA helps people across Kenya discover what is happening near them, from live music and sports to campus nights, festivals, and community events. We also give organizers a simple, trusted way to share their events with the right audience.
+        </p>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a href="{% url 'events:explore' %}" class="btn btn-primary">Explore events</a>
+          <a href="{% url 'core:share_event' %}" class="btn btn-outline-light">Share an event</a>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-white/10 bg-navy-800 p-5 text-white">
+        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-flame-500">What we do</p>
+        <dl class="mt-5 space-y-4">
+          <div class="rounded-2xl bg-navy-950 p-4 text-white ring-1 ring-white/10">
+            <dt class="text-xs font-semibold uppercase tracking-[0.12em] text-white/60">Discover</dt>
+            <dd class="mt-2 text-sm leading-6 text-white/80">Browse events by type, location, and date in one place.</dd>
+          </div>
+          <div class="rounded-2xl bg-navy-950 p-4 text-white ring-1 ring-white/10">
+            <dt class="text-xs font-semibold uppercase tracking-[0.12em] text-white/60">Share</dt>
+            <dd class="mt-2 text-sm leading-6 text-white/80">Organizers can publish upcoming events and reach local audiences.</dd>
+          </div>
+          <div class="rounded-2xl bg-navy-950 p-4 text-white ring-1 ring-white/10">
+            <dt class="text-xs font-semibold uppercase tracking-[0.12em] text-white/60">Trust</dt>
+            <dd class="mt-2 text-sm leading-6 text-white/80">Every submission is reviewed before it goes live.</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 grid gap-5 text-navy-900 sm:grid-cols-2 xl:grid-cols-3">
+    <div class="rounded-3xl border border-navy-900/10 bg-white p-6 text-navy-900 shadow-sm ring-1 ring-navy-900/5">
+      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-navy-700">For people</p>
+      <h2 class="mt-3 text-xl font-extrabold text-navy-900">Simple discovery</h2>
+      <p class="mt-3 text-sm leading-6 text-navy-700">Find what is worth your time, whether you are planning a night out, a weekend trip, or a community gathering.</p>
+    </div>
+    <div class="rounded-3xl border border-navy-900/10 bg-white p-6 text-navy-900 shadow-sm ring-1 ring-navy-900/5">
+      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-navy-700">For organizers</p>
+      <h2 class="mt-3 text-xl font-extrabold text-navy-900">Better reach</h2>
+      <p class="mt-3 text-sm leading-6 text-navy-700">Tell more people about your event with a clean, welcoming listing built for attention and trust.</p>
+    </div>
+    <div class="rounded-3xl border border-navy-900/10 bg-white p-6 text-navy-900 shadow-sm ring-1 ring-navy-900/5">
+      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-navy-700">For Kenya</p>
+      <h2 class="mt-3 text-xl font-extrabold text-navy-900">Connected communities</h2>
+      <p class="mt-3 text-sm leading-6 text-navy-700">Strengthen the local event scene by making it easier to find, share, and attend meaningful experiences.</p>
+    </div>
+  </section>
+
+  <section class="mt-10 rounded-[28px] bg-paper-dark p-5 text-navy-900 shadow-sm ring-1 ring-navy-900/5 sm:mt-12 sm:p-8">
+    <div class="grid gap-6 xl:grid-cols-[1.1fr_0.9fr] xl:items-center xl:gap-8">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-navy-700">Our mission</p>
+        <h2 class="mt-3 text-3xl font-extrabold tracking-tight text-navy-900">Make it easier to find the experiences people care about.</h2>
+        <p class="mt-4 text-base leading-7 text-navy-700">
+          KULOSA brings discovery, promotion, and trust into one place. We help audiences find the right event quickly and help event organizers present their work clearly and professionally.
+        </p>
+      </div>
+
+      <div class="rounded-3xl border border-navy-900/10 bg-white p-5 text-navy-900 shadow-sm">
+        <h3 class="text-sm font-bold uppercase tracking-[0.16em] text-navy-700">How it works</h3>
+        <ol class="mt-4 space-y-4 text-sm text-navy-700">
+          <li class="flex gap-3">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-flame-100 font-bold text-flame-600">1</span>
+            <span>Browse events by category, place, and date.</span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-navy-100 font-bold text-navy-800">2</span>
+            <span>Review the details and follow the organizer’s ticket link.</span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 font-bold text-emerald-700">3</span>
+            <span>Get the word out by listing events that are ready to be discovered.</span>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 text-center sm:mt-12">
+    <h2 class="text-3xl font-extrabold tracking-tight text-navy-900">Your next great experience starts here.</h2>
+    <p class="mx-auto mt-3 max-w-2xl text-base text-navy-700">Whether you want to discover what is happening this weekend or share something unforgettable with your community, KULOSA is built to help.</p>
+    <div class="mt-6 flex flex-wrap justify-center gap-3">
+      <a href="{% url 'events:explore' %}" class="btn btn-primary">Explore events</a>
+      <a href="{% url 'core:share_event' %}" class="btn btn-outline">List your event</a>
+    </div>
+  </section>
 </div>
 {% endblock %}

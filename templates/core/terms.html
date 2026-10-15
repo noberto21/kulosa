@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+{% block title %}Terms of Use | KULOSA{% endblock %}
+{% block meta_description %}Read the Terms of Use for KULOSA, Kenya's event discovery and sharing platform. Understand our directory policies, organizer responsibilities, and user terms.{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-5xl px-4 py-10 sm:py-14">
+  <!-- Header / Hero -->
+  <section class="overflow-hidden rounded-[28px] bg-navy-900 px-6 py-10 text-white shadow-xl shadow-navy-950/20 sm:px-10 sm:py-12">
+    <div class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">
+      <span class="h-2 w-2 rounded-full bg-flame-500"></span>
+      Legal & Policies
+    </div>
+    <h1 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">Terms of Use</h1>
+    <p class="mt-4 max-w-2xl text-base leading-7 text-white/80 sm:text-lg">
+      Welcome to KULOSA. These Terms of Use govern your access to and use of our event discovery platform, services, and website.
+    </p>
+    <div class="mt-6 flex flex-wrap items-center gap-4 text-xs font-medium text-white/60">
+      <span>Effective Date: October 15, 2026</span>
+      <span>•</span>
+      <span>Applicable in: Republic of Kenya</span>
+      <span>•</span>
+      <span>Last Updated: October 2026</span>
+    </div>
+  </section>
+
+  <!-- Summary Box ("At a Glance") -->
+  <section class="mt-8 rounded-3xl border border-navy-900/10 bg-paper-dark p-6 shadow-sm ring-1 ring-navy-900/5 sm:p-8">
+    <div class="flex items-start gap-3">
+      <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-flame-100 text-flame-600">
+        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-base font-bold text-navy-900">Summary: KULOSA at a Glance</h2>
+        <p class="mt-1 text-sm leading-6 text-navy-700">
+          We believe in simple, honest, and transparent event discovery. Here are the most essential things you should know:
+        </p>
+        <ul class="mt-3 list-inside list-disc space-y-1.5 text-sm leading-6 text-navy-800">
+          <li><strong>We are an event discovery directory:</strong> KULOSA publishes event listings to help attendees discover what is happening across Kenya. We do not organize, host, or produce third-party events.</li>
+          <li><strong>Ticketing is between you and the organizer:</strong> Tickets and admissions are sold directly by event organizers or their third-party ticketing partners. KULOSA does not sell tickets, collect ticket payments, or issue refunds.</li>
+          <li><strong>Accuracy matters:</strong> Event organizers must provide truthful, up-to-date dates, venues, pricing, and ticket links.</li>
+          <li><strong>Community trust:</strong> Submissions are moderated, safe poster uploads are enforced, and fraudulent or misleading listings are removed.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Navigation / TOC -->
+  <nav aria-label="Table of contents" class="mt-8 rounded-2xl border border-navy-900/10 bg-white p-5 shadow-sm">
+    <p class="text-xs font-bold uppercase tracking-[0.16em] text-navy-700">Jump to Section</p>
+    <div class="mt-3 grid gap-2 text-sm text-navy-700 sm:grid-cols-2 md:grid-cols-3">
+      <a href="#acceptance" class="hover:text-flame-600 hover:underline">1. Acceptance of Terms</a>
+      <a href="#platform-role" class="hover:text-flame-600 hover:underline">2. Discovery Directory Role</a>
+      <a href="#accounts" class="hover:text-flame-600 hover:underline">3. User Accounts & Security</a>
+      <a href="#organizers" class="hover:text-flame-600 hover:underline">4. Organizer Submissions</a>
+      <a href="#posters" class="hover:text-flame-600 hover:underline">5. Poster & Media Rules</a>
+      <a href="#ticketing" class="hover:text-flame-600 hover:underline">6. Ticketing & Refunds</a>
+      <a href="#conduct" class="hover:text-flame-600 hover:underline">7. User Conduct & Cybercrimes</a>
+      <a href="#intellectual-property" class="hover:text-flame-600 hover:underline">8. Intellectual Property</a>
+      <a href="#moderation" class="hover:text-flame-600 hover:underline">9. Moderation & Reports</a>
+      <a href="#disclaimers" class="hover:text-flame-600 hover:underline">10. Disclaimers & Liability</a>
+      <a href="#governing-law" class="hover:text-flame-600 hover:underline">11. Governing Law (Kenya)</a>
+      <a href="#contact" class="hover:text-flame-600 hover:underline">12. Contact & Notices</a>
+    </div>
+  </nav>
+
+  <!-- Main Legal Content -->
+  <article class="mt-10 space-y-12 text-navy-900">
+
+    <!-- 1. Acceptance -->
+    <section id="acceptance" class="scroll-mt-8 rounded-3xl border border-navy-900/10 bg-white p-6 shadow-sm ring-1 ring-navy-900/5 sm:p-8">
+      <h2 class="text-2xl font-extrabold tracking-tight text-navy-900">1. Acceptance of Terms</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-navy-700">
+        <p>
+          By accessing or using the KULOSA website (<a href="{% url 'core:home' %}" class="font-medium text-flame-600 hover:underline">kulosa.co.ke</a> and related subdomains), mobile interfaces, or any associated services (collectively, the <strong>"Platform"</strong> or <strong>"Service"</strong>), you acknowledge that you have read, understood, and agree to be bound by these Terms of Use (<strong>"Terms"</strong>).
+        </p>
+        <p>
+          If you are using KULOSA on behalf of an organization, business entity, club, or festival collective, you represent and warrant that you have full authority to bind that entity to these Terms. If you do not agree to these Terms, you must discontinue your use of the Platform immediately.
+        </p>
+      </div>
+    </section>
+
+    <!-- 2. Discovery Directory Role -->
+    <section id="platform-role" class="scroll-mt-8 rounded-3xl border border-navy-900/10 bg-white p-6 shadow-sm ring-1 ring-navy-900/5 sm:p-8">
+      <h2 class="text-2xl font-extrabold tracking-tight text-navy-900">2. Platform Role: Event Discovery & Directory</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-navy-700">
+        <p>
+          KULOSA is a Kenya-first event discovery and listing platform designed to connect people with live experiences — including concerts, sports, campus activities, conferences, arts, and community gatherings.
+        </p>
+        <div class="rounded-2xl border-l-4 border-flame-500 bg-flame-100/30 p-4 text-navy-900">
+          <p class="font-bold">Important Notice Regarding Third-Party Events:</p>
+          <p class="mt-1 text-sm text-navy-700">
+            Unless explicitly identified as an official KULOSA-produced event, KULOSA is <strong>not</strong> the organizer, promoter, venue host, or ticketing agent of any event listed on the platform. All listings are submitted by independent organizers.
+          </p>
+        </div>
+        <p>
+          We do not guarantee or supervise the safety, quality, legality, scheduling, or actual occurrence of any listed event. Your decision to attend an event, travel to a venue, purchase tickets, or interact with an organizer is entirely voluntary and at your sole discretion.
+        </p>
+      </div>
+    </section>
+
+    <!-- 3. User Accounts -->
+    <section id="accounts" class="scroll-mt-8 rounded-3xl border border-navy-900/10 bg-white p-6 shadow-sm ring-1 ring-navy-900/5 sm:p-8">
+      <h2 class="text-2xl font-extrabold tracking-tight text-navy-900">3. User Accounts & Security</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-navy-700">
+        <p>
+          You may explore public listings without registering. However, submitting events, saving favorites, or reporting content requires creating a KULOSA account.
+        </p>
+        <ul class="list-inside list-disc space-y-2">
+          <li><strong>Eligibility:</strong> You must be at least 18 years old, or possess valid parental or guardian consent to register an account and submit events.</li>
+          <li><strong>Accurate Details:</strong> You agree to provide true, accurate, and current information, including your full legal name, a valid email address, and active contact numbers where requested.</li>
+          <li><strong>Account Security:</strong> You are solely responsible for maintaining the confidentiality of your login credentials and for all activities that take place under your account.</li>
+          <li><strong>Notification of Breach:</strong> You must promptly notify KULOSA if you discover or suspect any unauthorized access to your account or any security breach.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4. Organizer Submissions -->
+    <section id="organizers" class="scroll-mt-8 rounded-3xl border border-navy-900/10 bg-white p-6 shadow-sm ring-1 ring-navy-900/5 sm:p-8">
+      <h2 class="text-2xl font-extrabold tracking-tight text-navy-900">4. Organizer Submissions & Listing Standards</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-navy-700">
+        <p>
+          When you submit an event for publication on KULOSA, you act as an <strong>"Organizer"</strong> and agree to adhere strictly to the following standards:
+        </p>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-2xl bg-paper p-4 ring-1 ring-navy-900/10">
+            <h3 class="font-bold text-navy-900">Truth in Details</h3>
+            <p class="mt-1 text-xs leading-5 text-navy-700">Provide authentic event titles, realistic descriptions, correct Kenyan counties and towns, and accurate venue addresses. Misrepresenting venues, artists, or amenities is prohibited.</p>
+          </div>
+          <div class="rounded-2xl bg-paper p-4 ring-1 ring-navy-900/10">
+            <h3 class="font-bold text-navy-900">Accurate Pricing & Times</h3>
+            <p class="mt-1 text-xs leading-5 text-navy-700">Paid events must state true minimum prices in Kenyan Shillings (KES). All event dates and start/end times must be in East Africa Time (EAT) and reflect real schedules.</p>
+          </div>
+          <div class="rounded-2xl bg-paper p-4 ring-1 ring-navy-900/10">
+            <h3 class="font-bold text-navy-900">Valid Booking Links</h3>
+            <p class="mt-1 text-xs leading-5 text-navy-700">External ticketing URLs must point directly to legitimate ticketing platforms (e.g. M-PESA paybill pages, authorized ticketing vendors, or official registration forms) with secure HTTPS/HTTP links.</p>
+          </div>
+          <div class="rounded-2xl bg-paper p-4 ring-1 ring-navy-900/10">
+            <h3 class="font-bold text-navy-900">Licensing & Regulatory Compliance</h3>
+            <p class="mt-1 text-xs leading-5 text-navy-700">Organizers are solely responsible for securing all requisite statutory permits, including county government event permits, NEMA noise licenses, and music copyright clearances (e.g. MCSK/PRISK/KAMP).</p>
+          </div>
+        </div>
+        <p>
+          <strong>Review & Workflow:</strong> All submitted events undergo administrative review before being published. If you modify a published event, it returns to review status to ensure continued quality and accuracy. KULOSA reserves the unconditional right to approve, reject, or request revisions to any submission.
+        </p>
+        <p>
+          <strong>Cancellations & Postponements:</strong> If your event is postponed, relocated, or cancelled, you must immediately update or cancel the listing via your KULOSA dashboard and inform ticket holders through your primary communication channels.
+        </p>
+      </div>
+    </section>
+
+    <!-- 5. Posters and Media -->
+    <section id="posters" class="scroll-mt-8 rounded-3xl border border-navy-900/10 bg-white p-6 shadow-sm ring-1 ring-navy-900/5 sm:p-8">
+      <h2 class="text-2xl font-extrabold tracking-tight text-navy-900">5. Poster & Media Upload Guidelines</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-navy-700">
+        <p>
+          To maintain high visual standards and protect community members, all uploaded posters and logos must comply with our technical and safety parameters:
+        </p>
+        <ul class="list-inside list-disc space-y-2">
+          <li><strong>Accepted Formats:</strong> Genuine JPEG, PNG, or WebP image files only, up to a maximum file size of 5 MB and maximum dimensions of 6,000 pixels.</li>
+          <li><strong>Prohibited Files:</strong> SVG, GIF, executable scripts, and disguised file types are strictly rejected by our automated upload pipeline.</li>
+          <li><strong>Privacy Sanitization:</strong> For your privacy, KULOSA automatically strips EXIF metadata (including embedded GPS coordinates and camera models) and re-encodes images upon storage.</li>
+          <li><strong>Content Restrictions:</strong> Posters must not contain explicit adult content, graphic violence, defamatory slurs, hate speech, or counterfeit commercial trademarks.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6. Ticketing & Refunds -->
+    <section id="ticketing" class="scroll-mt-8 rounded-3xl border border-navy-900/10 bg-white p-6 shadow-sm ring-1 ring-navy-900/5 sm:p-8">
+      <h2 class="text-2xl font-extrabold tracking-tight text-navy-900">6. Ticketing, Pricing & Refund Disclaimers</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-navy-700">
+        <p>
+          <strong>Third-Party Ticketing:</strong> When you click a ticket button or follow an external link on KULOSA, you leave our platform and transact directly with the event organizer or their chosen third-party ticketing vendor.
+        </p>
+        <p>
+          <strong>No Financial Liability for Ticket Sales:</strong> KULOSA is <strong>not</strong> a party to any contract for ticket purchase, registration, or reservation. KULOSA receives no ticketing revenue or buyer payment data, and has no obligation to facilitate refunds, chargebacks, exchanges, or compensation in the event of:
+        </p>
+        <ul class="list-inside list-disc space-y-1.5 pl-4">
+          <li>Event cancellation, postponement, rescheduling, or relocation;</li>
+          <li>Artist, speaker, or performer lineup changes;</li>
+          <li>Refusal of venue entry by organizers or security;</li>
+          <li>Fraud, insolvency, or misconduct on the part of an organizer or ticketing agent.</li>
+        </ul>
+        <p>
+          All inquiries concerning tickets, admissions, or refunds must be directed to the designated organizer via the contact details provided on their event listing or ticketing portal.
+        </p>
+      </div>
+    </section>
+
+    <!-- 7. User Conduct & Cybercrimes -->
+    <section id="conduct" class="scroll-mt-8 rounded-3xl border border-navy-900/10 bg-white p-6 shadow-sm ring-1 ring-navy-900/5 sm:p-8">
+      <h2 class="text-2xl font-extrabold tracking-tight text-navy-900">7. Prohibited Conduct & Cybercrimes Act Compliance</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-navy-700">
+        <p>
+          You agree to use KULOSA exclusively for lawful purposes in accordance with the laws of Kenya, including the <em>Computer Misuse and Cybercrimes Act (No. 5 of 2018)</em> and the <em>Kenya Data Protection Act, 2019</em>. You expressly agree not to:
+        </p>
+        <ul class="list-inside list-disc space-y-2">
+          <li>Create fake, non-existent, or scam events to solicit money, donations, or contact information;</li>
+          <li>Scrape, crawl, harvest, or extract event data, user emails, or phone numbers using automated scrapers or bots without written authorization;</li>
+          <li>Attempt to compromise platform security, probe vulnerabilities, bypass rate limits, or launch denial-of-service (DoS) attacks;</li>
+          <li>Upload malicious code, viruses, corrupted files, or links directing users to phishing sites;</li>
+          <li>Impersonate any person, business, educational institution, public agency, or organizer;</li>
+          <li>Submit abusive, vexatious, or fabricated event reports against legitimate organizers.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 8. Intellectual Property -->
+    <section id="intellectual-property" class="scroll-mt-8 rounded-3xl border border-navy-900/10 bg-white p-6 shadow-sm ring-1 ring-navy-900/5 sm:p-8">
+      <h2 class="text-2xl font-extrabold tracking-tight text-navy-900">8. Intellectual Property Rights & Content License</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-navy-700">
+        <p>
+          <strong>KULOSA IP:</strong> The KULOSA name, logo, wordmark, visual interface, brand identity, database schema, software code, and design assets are the exclusive property of KULOSA and are protected under Kenyan and international intellectual property laws.
+        </p>
+        <p>
+          <strong>Organizer Content License:</strong> You retain ownership of any promotional poster, trademark, logo, text, or media you submit. However, by submitting content to KULOSA, you grant us a worldwide, non-exclusive, royalty-free, transferable license to host, display, resize, distribute, format, and promote your event across the platform, social media channels, search engine feeds, and sitemaps.
+        </p>
+        <p>
+          <strong>Warranty of Ownership:</strong> You represent and warrant that you own or possess all necessary rights, licenses, and permissions for the images, logos, and promotional copy included in your event listings, and that publication on KULOSA does not infringe any third party’s copyright or trademark.
+        </p>
+      </div>
+    </section>
+
+    <!-- 9. Moderation & Community Reports -->
+    <section id="moderation" class="scroll-mt-8 rounded-3xl border border-navy-900/10 bg-white p-6 shadow-sm ring-1 ring-navy-900/5 sm:p-8">
+      <h2 class="text-2xl font-extrabold tracking-tight text-navy-900">9. Moderation, Reporting & Account Actions</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-navy-700">
+        <p>
+          KULOSA empowers community members to report listings that appear inaccurate, cancelled, deceptive, or offensive. Our administrative staff reviews flagged listings promptly.
+        </p>
+        <p>
+          We reserve the right, in our sole discretion and without liability, to:
+        </p>
+        <ul class="list-inside list-disc space-y-1.5 pl-4">
+          <li>Decline, reject, or modify any event submission or organizer profile;</li>
+          <li>Unpublish, unfeature, or delete live events that violate these Terms or receive verified complaints;</li>
+          <li>Suspend or permanently terminate accounts found to engage in fraud, abuse, or repetitive rule violations;</li>
+          <li>Cooperate with Kenyan law enforcement agencies and regulatory bodies in investigating fraudulent listings or illegal activities.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 10. Disclaimers & Limitation of Liability -->
+    <section id="disclaimers" class="scroll-mt-8 rounded-3xl border border-navy-900/10 bg-white p-6 shadow-sm ring-1 ring-navy-900/5 sm:p-8">
+      <h2 class="text-2xl font-extrabold tracking-tight text-navy-900">10. Disclaimers of Warranties & Limitation of Liability</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-navy-700">
+        <p>
+          THE PLATFORM IS PROVIDED ON AN <strong>"AS IS"</strong> AND <strong>"AS AVAILABLE"</strong> BASIS WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+        </p>
+        <p>
+          KULOSA DOES NOT WARRANT THAT THE PLATFORM WILL OPERATE UNINTERRUPTED OR ERROR-FREE, THAT DEFECTS WILL BE PROMPTLY CORRECTED, OR THAT EVENT DETAILS SUBMITTED BY THIRD PARTIES ARE COMPLETE OR ACCURATE.
+        </p>
+        <p>
+          TO THE FULLEST EXTENT PERMITTED BY APPLICABLE KENYAN LAW, KULOSA, ITS DIRECTORS, EMPLOYEES, AND AGENTS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, NOR FOR ANY LOSS OF PROFITS, DATA, USE, GOODWILL, TICKET PURCHASES, OR BODILY INJURY/PROPERTY DAMAGE SUSTAINED AT ANY LISTED EVENT.
+        </p>
+      </div>
+    </section>
+
+    <!-- 11. Governing Law -->
+    <section id="governing-law" class="scroll-mt-8 rounded-3xl border border-navy-900/10 bg-white p-6 shadow-sm ring-1 ring-navy-900/5 sm:p-8">
+      <h2 class="text-2xl font-extrabold tracking-tight text-navy-900">11. Governing Law & Dispute Resolution</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-navy-700">
+        <p>
+          These Terms and any dispute or claim arising out of or related to your use of KULOSA shall be governed by, construed, and enforced in accordance with the substantive laws of the <strong>Republic of Kenya</strong>.
+        </p>
+        <p>
+          Any legal action, suit, or proceeding arising under or in connection with these Terms shall be instituted exclusively in the competent courts located in <strong>Nairobi, Kenya</strong>, and each party irrevocably submits to the exclusive personal jurisdiction of such courts.
+        </p>
+      </div>
+    </section>
+
+    <!-- 12. Contact & Notices -->
+    <section id="contact" class="scroll-mt-8 rounded-3xl border border-navy-900/10 bg-white p-6 shadow-sm ring-1 ring-navy-900/5 sm:p-8">
+      <h2 class="text-2xl font-extrabold tracking-tight text-navy-900">12. Modifications to Terms & Contact Details</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-navy-700">
+        <p>
+          We may update or revise these Terms from time to time to reflect operational changes, legal updates, or new platform features. Revised terms will be posted directly to this page with an updated "Last Updated" date. Continued use of KULOSA after any revision constitutes your agreement to the modified Terms.
+        </p>
+        <div class="mt-6 rounded-2xl bg-paper p-5 ring-1 ring-navy-900/10">
+          <h3 class="font-bold text-navy-900">Questions or Legal Inquiries?</h3>
+          <p class="mt-1 text-sm text-navy-700">
+            If you have questions regarding these Terms of Use, wish to report an intellectual property infringement, or need to contact our moderation team:
+          </p>
+          <dl class="mt-3 space-y-1 text-sm">
+            <div><span class="font-semibold text-navy-900">Service:</span> KULOSA Event Discovery</div>
+            <div><span class="font-semibold text-navy-900">Location:</span> Nairobi, Kenya</div>
+            <div><span class="font-semibold text-navy-900">Email:</span> <a href="mailto:support@kulosa.co.ke" class="text-flame-600 hover:underline">support@kulosa.co.ke</a></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+  </article>
+
+  <!-- Bottom CTA / Help Navigation -->
+  <section class="mt-12 rounded-[24px] bg-paper-dark p-6 text-center ring-1 ring-navy-900/5 sm:p-8">
+    <h2 class="text-xl font-bold text-navy-900">Ready to explore or list your next event?</h2>
+    <p class="mx-auto mt-2 max-w-lg text-sm text-navy-700">Discover live events across Kenya or reach thousands of enthusiastic attendees with your own listing.</p>
+    <div class="mt-5 flex flex-wrap justify-center gap-3">
+      <a href="{% url 'events:explore' %}" class="btn btn-primary">Explore events</a>
+      <a href="{% url 'core:share_event' %}" class="btn btn-outline">Share an event</a>
+      <a href="{% url 'core:about' %}" class="btn btn-dark">About KULOSA</a>
+    </div>
+  </section>
+</div>
+{% endblock %}
