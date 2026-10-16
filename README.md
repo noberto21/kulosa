@@ -136,12 +136,10 @@ Password-reset emails print to the console in development. For production set `D
 
 Vercel detects this Django project from `manage.py` and `config/settings.py`, runs `collectstatic`, and serves static files through its CDN. Import the repository in Vercel and deploy with the default Django framework settings; no custom build command is required.
 
-Set these environment variables in the Vercel project (Production and Preview):
+To import the preview environment, import the root `.env.vercel` file into your Vercel project for the Production and Preview environments. It contains a generated Django secret and is gitignored; do not commit or share it. The local `.env` is left unchanged.
 
-- `DJANGO_SECRET_KEY`: a unique, randomly generated secret. Generate one with `python -c "import secrets; print(secrets.token_urlsafe(50))"`.
-- `DJANGO_DEBUG`: `False`.
-- `DJANGO_ALLOWED_HOSTS`: include the Vercel hostname if you change the project domain; the current `kulosa-ruddy.vercel.app` domain and Vercel-provided deployment hostnames are already allowed.
+Vercel supplies `VERCEL`, `VERCEL_URL`, and `VERCEL_PROJECT_PRODUCTION_URL` automatically; don't add these to the import file. Django uses the deployment hostnames for host and CSRF checks. If you add a custom domain, add its hostname to `DJANGO_ALLOWED_HOSTS` and its full HTTPS origin to `DJANGO_CSRF_TRUSTED_ORIGINS`. Set `SITE_URL` in Vercel only if email links need a specific canonical URL.
 
-This preview setup stores SQLite at `/tmp/kulosa.sqlite3` and applies migrations when a function instance starts. Vercel's temporary storage is isolated per instance and can be cleared at any time, so accounts, sessions, and event data are **not persistent or shared between instances**. Uploaded media is also local and ephemeral. This is suitable only for a disposable preview, not a real launch. Before accepting real users or uploads, add managed PostgreSQL and persistent object-storage support to the project, then run migrations against that database.
+This preview setup stores SQLite at `/tmp/kulosa.sqlite3` and applies migrations when either the ASGI or WSGI function instance starts. Vercel's temporary storage is isolated per instance and can be cleared at any time, so accounts, sessions, and event data are **not persistent or shared between instances**. Uploaded media is also local and ephemeral. This is suitable only for a disposable preview, not a real launch. Before accepting real users or uploads, add managed PostgreSQL and persistent object-storage support to the project, then run migrations against that database.
 
-Vercel supplies its deployment hostname automatically for allowed-host and CSRF checks. If using a custom domain, set `DJANGO_ALLOWED_HOSTS` and `DJANGO_CSRF_TRUSTED_ORIGINS` to include it (the latter uses full HTTPS origins, comma-separated). `SITE_URL` can also be set to the canonical HTTPS URL for email links.
+The import file uses Django's console email backend; password reset and moderator emails will not actually be delivered until SMTP is configured.
