@@ -29,8 +29,6 @@ if not SECRET_KEY:
     else:
         raise ImproperlyConfigured("Set DJANGO_SECRET_KEY in your environment or .env file.")
 
-ALLOWED_HOSTS = [h.strip() for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",") if h.strip()]
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -142,9 +140,11 @@ if "test" in sys.argv[1:2]:
     PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 ALLOWED_HOSTS = [
-    "kulosa-ruddy.vercel.app",
-    "localhost",
-    "127.0.0.1",
+    host.strip()
+    for host in os.environ.get(
+        "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1"
+    ).split(",")
+    if host.strip()
 ] + [
     os.environ[name]
     for name in ("VERCEL_URL", "VERCEL_PROJECT_PRODUCTION_URL")
