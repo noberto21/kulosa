@@ -86,7 +86,8 @@ ASGI_APPLICATION = "config.asgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.environ.get("DJANGO_DB_PATH") or BASE_DIR / "db.sqlite3",
+        "NAME": os.environ.get("DJANGO_DB_PATH")
+        or ("/tmp/kulosa.sqlite3" if os.environ.get("VERCEL") else BASE_DIR / "db.sqlite3"),
         "OPTIONS": {"timeout": 20},  # wait up to 20s if another request holds the write lock
     }
 }
@@ -117,7 +118,11 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", False)
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "KULOSA <no-reply@localhost>")
-SITE_URL = os.environ.get("SITE_URL", "http://127.0.0.1:8000")  # used in emails
+VERCEL_SITE_HOST = os.environ.get("VERCEL_PROJECT_PRODUCTION_URL") or os.environ.get("VERCEL_URL")
+SITE_URL = os.environ.get(
+    "SITE_URL",
+    f"https://{VERCEL_SITE_HOST}" if VERCEL_SITE_HOST else "http://127.0.0.1:8000",
+)  # used in emails
 # Staff who get an email for each new submission and report (comma separated; empty = no emails).
 MODERATOR_EMAILS = [e.strip() for e in os.environ.get("MODERATOR_EMAILS", "").split(",") if e.strip()]
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 3  # reset links last 3 hours
@@ -126,6 +131,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 if not DEBUG:
     SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", True)
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 31536000
@@ -139,4 +145,18 @@ ALLOWED_HOSTS = [
     "kulosa-ruddy.vercel.app",
     "localhost",
     "127.0.0.1",
+] + [
+    os.environ[name]
+    for name in ("VERCEL_URL", "VERCEL_PROJECT_PRODUCTION_URL")
+    if os.environ.get(name)
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
+] + [
+    f"https://{os.environ[name]}"
+    for name in ("VERCEL_URL", "VERCEL_PROJECT_PRODUCTION_URL")
+    if os.environ.get(name)
 ]
