@@ -131,3 +131,17 @@ Password-reset emails print to the console in development. For production set `D
 - Behind a proxy, make sure the proxy sets `REMOTE_ADDR` correctly; `X-Forwarded-For` is deliberately not trusted.
 - Media uploads are stored locally under `media/` (served by Django only when `DJANGO_DEBUG=True`). In production serve `/media/` from your web server or move to cloud storage, and back it up.
 - Set `SITE_URL` so links in emails point to your real domain.
+
+## Vercel preview deployment
+
+Vercel detects this Django project from `manage.py` and `config/settings.py`, runs `collectstatic`, and serves static files through its CDN. Import the repository in Vercel and deploy with the default Django framework settings; no custom build command is required.
+
+Set these environment variables in the Vercel project (Production and Preview):
+
+- `DJANGO_SECRET_KEY`: a unique, randomly generated secret. Generate one with `python -c "import secrets; print(secrets.token_urlsafe(50))"`.
+- `DJANGO_DEBUG`: `False`.
+- `DJANGO_ALLOWED_HOSTS`: include the Vercel hostname if you change the project domain; the current `kulosa-ruddy.vercel.app` domain and Vercel-provided deployment hostnames are already allowed.
+
+This preview setup stores SQLite at `/tmp/kulosa.sqlite3` and applies migrations when a function instance starts. Vercel's temporary storage is isolated per instance and can be cleared at any time, so accounts, sessions, and event data are **not persistent or shared between instances**. Uploaded media is also local and ephemeral. This is suitable only for a disposable preview, not a real launch. Before accepting real users or uploads, add managed PostgreSQL and persistent object-storage support to the project, then run migrations against that database.
+
+Vercel supplies its deployment hostname automatically for allowed-host and CSRF checks. If using a custom domain, set `DJANGO_ALLOWED_HOSTS` and `DJANGO_CSRF_TRUSTED_ORIGINS` to include it (the latter uses full HTTPS origins, comma-separated). `SITE_URL` can also be set to the canonical HTTPS URL for email links.
