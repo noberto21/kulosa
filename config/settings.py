@@ -134,3 +134,9 @@ if not DEBUG:
 # Faster password hashing ONLY when running the test suite.
 if "test" in sys.argv[1:2]:
     PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+ALLOWED_HOSTS = [
+    "kulosa-ruddy.vercel.app",
+    "localhost",
+    "127.0.0.1",
+]
