@@ -29,5 +29,9 @@
   <main id="main" class="flex-1">{% block content %}{% endblock %}</main>
   {% include "partials/_footer.html" %}
   <script src="{% static 'js/main.js' %}" defer></script>
+  {% if vercel_analytics_enabled %}
+    <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+    <script defer src="/_vercel/insights/script.js"></script>
+  {% endif %}
 </body>
 </html>
