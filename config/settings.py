@@ -130,7 +130,10 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = Path(
+    os.environ.get("DJANGO_MEDIA_ROOT")
+    or ("/tmp/kulosa-media" if os.environ.get("VERCEL") else BASE_DIR / "media")
+)
 
 # Email: prints password-reset emails to the console in development.
 EMAIL_BACKEND = os.environ.get("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
