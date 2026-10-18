@@ -1,14 +1,13 @@
 import os
-from pathlib import Path
 
 
-def migrate_vercel_sqlite_database():
+def migrate_vercel_database():
     if not os.environ.get("VERCEL"):
         return
 
-    from django.conf import settings
     from django.core.management import call_command
 
-    database_path = Path(settings.DATABASES["default"]["NAME"])
-    if not database_path.exists():
-        call_command("migrate", interactive=False, verbosity=0)
+    # Run idempotent migrations on cold starts for either SQLite or PostgreSQL.
+    # PostgreSQL has no local database file to inspect, and skipping migrations
+    # when a SQLite file exists would leave new deployments behind.
+    call_command("migrate", interactive=False, verbosity=0)
