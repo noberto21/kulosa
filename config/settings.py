@@ -1,6 +1,7 @@
 """KULOSA settings (Phase 1)."""
 import os
 import sys
+from urllib.parse import parse_qsl, unquote, urlparse
 from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
@@ -79,16 +80,39 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-# Database: SQLite. Set DJANGO_DB_PATH to keep the file outside the project
-# folder (recommended in production so deploys never overwrite it).
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.environ.get("DJANGO_DB_PATH")
-        or ("/tmp/kulosa.sqlite3" if os.environ.get("VERCEL") else BASE_DIR / "db.sqlite3"),
-        "OPTIONS": {"timeout": 20},  # wait up to 20s if another request holds the write lock
+# Prefer a managed PostgreSQL database in production. Vercel Postgres and most
+# providers expose a PostgreSQL connection URL as DATABASE_URL or POSTGRES_URL.
+DATABASE_URL = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL")
+if DATABASE_URL:
+    parsed_database_url = urlparse(DATABASE_URL)
+    if parsed_database_url.scheme not in {"postgres", "postgresql"}:
+        raise ImproperlyConfigured("DATABASE_URL must use the postgres:// or postgresql:// scheme.")
+    database_options = dict(parse_qsl(parsed_database_url.query))
+    if os.environ.get("VERCEL"):
+        database_options.setdefault("sslmode", "require")
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": unquote(parsed_database_url.path.lstrip("/")),
+            "USER": unquote(parsed_database_url.username or ""),
+            "PASSWORD": unquote(parsed_database_url.password or ""),
+            "HOST": parsed_database_url.hostname or "",
+            "PORT": parsed_database_url.port or "",
+            "OPTIONS": database_options,
+            "CONN_MAX_AGE": 0 if os.environ.get("VERCEL") else 60,
+        }
     }
-}
+else:
+    # Local development fallback. SQLite on Vercel is ephemeral and isolated
+    # per function instance; set DATABASE_URL before accepting real users.
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.environ.get("DJANGO_DB_PATH")
+            or ("/tmp/kulosa.sqlite3" if os.environ.get("VERCEL") else BASE_DIR / "db.sqlite3"),
+            "OPTIONS": {"timeout": 20},  # wait up to 20s if another request holds the write lock
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
