@@ -21,6 +21,9 @@ def env_bool(name, default=False):
 
 
 DEBUG = env_bool("DJANGO_DEBUG", False)
+IS_VERCEL = any(os.environ.get(name) for name in ("VERCEL", "VERCEL_ENV", "VERCEL_URL"))
+if IS_VERCEL and DEBUG:
+    raise ImproperlyConfigured("DJANGO_DEBUG must be false on Vercel.")
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "")
 if not SECRET_KEY:
@@ -83,12 +86,17 @@ ASGI_APPLICATION = "config.asgi.application"
 # Prefer a managed PostgreSQL database in production. Vercel Postgres and most
 # providers expose a PostgreSQL connection URL as DATABASE_URL or POSTGRES_URL.
 DATABASE_URL = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL")
+if IS_VERCEL and not DATABASE_URL:
+    raise ImproperlyConfigured(
+        "Set DATABASE_URL or POSTGRES_URL to a persistent PostgreSQL database before deploying to Vercel."
+    )
+
 if DATABASE_URL:
     parsed_database_url = urlparse(DATABASE_URL)
     if parsed_database_url.scheme not in {"postgres", "postgresql"}:
         raise ImproperlyConfigured("DATABASE_URL must use the postgres:// or postgresql:// scheme.")
     database_options = dict(parse_qsl(parsed_database_url.query))
-    if os.environ.get("VERCEL"):
+    if IS_VERCEL:
         database_options.setdefault("sslmode", "require")
     DATABASES = {
         "default": {
@@ -99,17 +107,15 @@ if DATABASE_URL:
             "HOST": parsed_database_url.hostname or "",
             "PORT": parsed_database_url.port or "",
             "OPTIONS": database_options,
-            "CONN_MAX_AGE": 0 if os.environ.get("VERCEL") else 60,
+            "CONN_MAX_AGE": 0 if IS_VERCEL else 60,
         }
     }
 else:
-    # Local development fallback. SQLite on Vercel is ephemeral and isolated
-    # per function instance; set DATABASE_URL before accepting real users.
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": os.environ.get("DJANGO_DB_PATH")
-            or ("/tmp/kulosa.sqlite3" if os.environ.get("VERCEL") else BASE_DIR / "db.sqlite3"),
+            or BASE_DIR / "db.sqlite3",
             "OPTIONS": {"timeout": 20},  # wait up to 20s if another request holds the write lock
         }
     }
@@ -130,10 +136,24 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "media/"
-if os.environ.get("VERCEL") or os.environ.get("VERCEL_ENV") or os.environ.get("VERCEL_URL"):
+if IS_VERCEL:
     MEDIA_ROOT = Path("/tmp/kulosa-media")
 else:
     MEDIA_ROOT = Path(os.environ.get("DJANGO_MEDIA_ROOT") or BASE_DIR / "media")
+
+if IS_VERCEL:
+    if not (
+        os.environ.get("BLOB_READ_WRITE_TOKEN")
+        or os.environ.get("VERCEL_BLOB_READ_WRITE_TOKEN")
+        or os.environ.get("BLOB_STORE_ID")
+    ):
+        raise ImproperlyConfigured(
+            "Connect a Vercel Blob store before deploying. It must provide BLOB_READ_WRITE_TOKEN or BLOB_STORE_ID."
+        )
+    STORAGES = {
+        "default": {"BACKEND": "apps.events.storage.VercelBlobStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    }
 
 # Email: prints password-reset emails to the console in development.
 EMAIL_BACKEND = os.environ.get("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")

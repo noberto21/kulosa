@@ -72,7 +72,7 @@ class OrganizerProfile(models.Model):
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="organizer_profile")
     name = models.CharField("organization name", max_length=120)
     slug = models.SlugField(max_length=140, unique=True, blank=True)
-    logo = models.ImageField(upload_to=logo_upload_path, blank=True)
+    logo = models.ImageField(upload_to=logo_upload_path, blank=True, max_length=500)
     description = models.TextField(blank=True, max_length=2000)
     contact_email = models.EmailField(blank=True)
     contact_phone = models.CharField(max_length=20, blank=True)
@@ -123,7 +123,7 @@ class Event(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="events")
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="events")
     organizer = models.ForeignKey(OrganizerProfile, null=True, blank=True, on_delete=models.SET_NULL, related_name="events")
-    cover_image = models.ImageField(upload_to=poster_upload_path, blank=True)
+    cover_image = models.ImageField(upload_to=poster_upload_path, blank=True, max_length=500)
 
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
