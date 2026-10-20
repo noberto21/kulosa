@@ -136,24 +136,10 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "media/"
-if IS_VERCEL:
+if os.environ.get("VERCEL") or os.environ.get("VERCEL_ENV") or os.environ.get("VERCEL_URL"):
     MEDIA_ROOT = Path("/tmp/kulosa-media")
 else:
     MEDIA_ROOT = Path(os.environ.get("DJANGO_MEDIA_ROOT") or BASE_DIR / "media")
-
-if IS_VERCEL:
-    if not (
-        os.environ.get("BLOB_READ_WRITE_TOKEN")
-        or os.environ.get("VERCEL_BLOB_READ_WRITE_TOKEN")
-        or os.environ.get("BLOB_STORE_ID")
-    ):
-        raise ImproperlyConfigured(
-            "Connect a Vercel Blob store before deploying. It must provide BLOB_READ_WRITE_TOKEN or BLOB_STORE_ID."
-        )
-    STORAGES = {
-        "default": {"BACKEND": "apps.events.storage.VercelBlobStorage"},
-        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
-    }
 
 # Email: prints password-reset emails to the console in development.
 EMAIL_BACKEND = os.environ.get("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
