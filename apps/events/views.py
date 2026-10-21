@@ -61,7 +61,7 @@ def detail(request, slug):
 
     url = request.build_absolute_uri(event.get_absolute_url())
     text = quote(f"{event.title} on KULOSA")
-    image_url = request.build_absolute_uri(event.cover_image.url) if event.cover_image else ""
+    image_url = request.build_absolute_uri(event.poster_url) if event.poster_url else ""
     share = {
         "url": url,
         "whatsapp": f"https://wa.me/?text={text}%20{quote(url, safe='')}",

@@ -10,6 +10,8 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.text import slugify
 
+from .storage import public_image_url
+
 
 _ALLOWED_EXT = {".jpg", ".jpeg", ".png", ".webp"}
 
@@ -86,6 +88,10 @@ class OrganizerProfile(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def logo_url(self):
+        return public_image_url(self.logo)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -175,6 +181,10 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def poster_url(self):
+        return public_image_url(self.cover_image)
 
     def clean(self):
         errors = {}

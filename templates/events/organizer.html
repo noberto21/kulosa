@@ -4,7 +4,7 @@
 {% block content %}
 <div class="bg-navy-900 text-white on-navy">
   <div class="mx-auto flex max-w-6xl items-center gap-5 px-4 py-10">
-    {% if organizer.logo %}<img src="{{ organizer.logo.url }}" alt="" class="h-20 w-20 rounded-xl bg-white object-cover">{% endif %}
+    {% if organizer.logo_url %}<img src="{{ organizer.logo_url }}" alt="" class="h-20 w-20 rounded-xl bg-white object-cover">{% endif %}
     <div>
       <h1 class="text-3xl font-extrabold tracking-tight">{{ organizer.name }}{% if organizer.is_verified %} <span class="badge badge-free align-middle">Verified</span>{% endif %}</h1>
       {% if organizer.description %}<p class="mt-2 max-w-2xl text-white/80">{{ organizer.description }}</p>{% endif %}

@@ -63,6 +63,19 @@ class VisibilityTests(Base):
         self.assertNotContains(r, "Secret pending")
         self.assertContains(r, "No events are listed yet")
 
+    @override_settings(STORAGES={
+        "default": {"BACKEND": "apps.events.storage.VercelBlobStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    })
+    def test_homepage_uses_poster_placeholder_for_legacy_media_path(self):
+        event = self.ev("Legacy poster", is_featured=True, cover_image="events/posters/old-poster.png")
+
+        response = self.client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, event.title)
+        self.assertNotContains(response, "events/posters/old-poster.png")
+
     def test_in_progress_event_still_listed(self):
         now = timezone.now()
         self.ev("Happening now", start_datetime=now - timedelta(hours=1), end_datetime=now + timedelta(hours=2))

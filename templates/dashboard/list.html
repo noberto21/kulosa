@@ -26,8 +26,8 @@
   <ul class="mt-6 space-y-4">
     {% for event in page.object_list %}
     <li class="flex flex-col gap-4 rounded-xl bg-white p-4 shadow-sm ring-1 ring-navy-900/10 sm:flex-row">
-      {% if event.cover_image %}
-        <img src="{{ event.cover_image.url }}" alt="" class="h-28 w-full rounded-lg object-cover sm:w-44" loading="lazy">
+      {% if event.poster_url %}
+        <img src="{{ event.poster_url }}" alt="" class="h-28 w-full rounded-lg object-cover sm:w-44" loading="lazy">
       {% else %}
         <div class="poster h-28 w-full rounded-lg sm:w-44" aria-hidden="true"></div>
       {% endif %}

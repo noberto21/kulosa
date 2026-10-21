@@ -1,7 +1,7 @@
 <article class="ticket group">
   <a href="{% url 'events:detail' event.slug %}" class="absolute inset-0 z-10" aria-label="{{ event.title }}"></a>
   <div class="ticket-poster poster poster-{{ event.category.poster_style }}">
-    {% if event.cover_image %}<img src="{{ event.cover_image.url }}" alt="" loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105">{% endif %}
+    {% if event.poster_url %}<img src="{{ event.poster_url }}" alt="" loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105">{% endif %}
     <div class="ticket-stub" aria-hidden="true">
       <span class="text-xl font-extrabold leading-none">{{ event.start_datetime|date:"j" }}</span>
       <span class="text-[11px] font-semibold text-flame-600">{{ event.start_datetime|date:"M" }}</span>

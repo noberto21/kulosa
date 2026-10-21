@@ -1,10 +1,14 @@
 """Django storage backend for public Vercel Blob event images."""
+import logging
 import mimetypes
 
 from django.core.exceptions import ImproperlyConfigured, SuspiciousFileOperation
 from django.core.files.base import ContentFile
 from django.core.files.storage import Storage
 from django.core.files.utils import validate_file_name
+
+
+logger = logging.getLogger(__name__)
 
 
 class VercelBlobStorage(Storage):
@@ -44,9 +48,20 @@ class VercelBlobStorage(Storage):
         return ContentFile(result.body, name=name)
 
     def delete(self, name):
+        if not name.startswith("https://"):
+            logger.warning("Skipping deletion of a legacy image reference that is not stored in Vercel Blob.")
+            return
         self._blob().delete_blob(name)
 
     def url(self, name):
         if not name.startswith("https://"):
             raise ValueError("Vercel Blob storage expects an HTTPS delivery URL.")
         return name
+
+
+def public_image_url(image):
+    if not image:
+        return ""
+    if isinstance(image.storage, VercelBlobStorage) and not image.name.startswith("https://"):
+        return ""
+    return image.url

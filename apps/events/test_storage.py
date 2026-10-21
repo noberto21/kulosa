@@ -5,7 +5,7 @@ from django.core.exceptions import SuspiciousFileOperation
 from django.core.files.base import ContentFile
 from django.test import SimpleTestCase
 
-from .storage import VercelBlobStorage
+from .storage import VercelBlobStorage, public_image_url
 
 
 class VercelBlobStorageTests(SimpleTestCase):
@@ -43,6 +43,22 @@ class VercelBlobStorageTests(SimpleTestCase):
         self.storage.delete(url)
 
         self.blob.delete_blob.assert_called_once_with(url)
+
+    def test_delete_skips_legacy_local_image_reference(self):
+        self.storage.delete("events/posters/old-poster.png")
+
+        self.blob.delete_blob.assert_not_called()
+
+    def test_legacy_image_reference_has_no_public_url(self):
+        image = SimpleNamespace(name="events/posters/old-poster.png", storage=self.storage)
+
+        self.assertEqual(public_image_url(image), "")
+
+    def test_blob_image_reference_has_public_url(self):
+        url = "https://store.public.blob.vercel-storage.com/poster.png"
+        image = SimpleNamespace(name=url, storage=self.storage, url=url)
+
+        self.assertEqual(public_image_url(image), url)
 
     def test_save_rejects_path_traversal(self):
         with self.assertRaises(SuspiciousFileOperation):
