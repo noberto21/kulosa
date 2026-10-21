@@ -290,6 +290,8 @@ class DashboardViewTests(Base):
         e = Event.objects.get()
         self.assertRegex(e.cover_image.name, r"^events/posters/[0-9a-f]{32}\.png$")
         self.assertTrue(os.path.exists(e.cover_image.path))
+        response = self.client.get(reverse("dashboard:list"))
+        self.assertContains(response, f'src="/media/{e.cover_image.name}"')
 
     def test_replacing_poster_deletes_old_file(self):
         self.login()
