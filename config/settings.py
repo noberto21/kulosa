@@ -1,6 +1,7 @@
 """KULOSA settings (Phase 1)."""
 import os
 import sys
+from urllib.parse import parse_qsl, unquote, urlparse
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -23,6 +24,9 @@ def env_bool(name, default=False):
 
 
 DEBUG = env_bool("DJANGO_DEBUG", False)
+IS_VERCEL = any(os.environ.get(name) for name in ("VERCEL", "VERCEL_ENV", "VERCEL_URL"))
+if IS_VERCEL and DEBUG:
+    raise ImproperlyConfigured("DJANGO_DEBUG must be false on Vercel.")
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "")
 if not SECRET_KEY:
@@ -31,19 +35,6 @@ if not SECRET_KEY:
         SECRET_KEY = "dev-only-insecure-key-do-not-use-in-production"
     else:
         raise ImproperlyConfigured("Set DJANGO_SECRET_KEY in your environment or .env file.")
-
-ALLOWED_HOSTS = [h.strip() for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",") if h.strip()]
-for vercel_host_var in ("VERCEL_URL", "VERCEL_PROJECT_PRODUCTION_URL"):
-    vercel_host = os.environ.get(vercel_host_var, "").strip()
-    if vercel_host:
-        try:
-            hostname = urlsplit(vercel_host if "://" in vercel_host else f"//{vercel_host}").hostname
-        except ValueError as exc:
-            raise ImproperlyConfigured(f"Invalid hostname in {vercel_host_var}.") from exc
-        if not hostname:
-            raise ImproperlyConfigured(f"Invalid hostname in {vercel_host_var}.")
-        if hostname not in ALLOWED_HOSTS:
-            ALLOWED_HOSTS.append(hostname)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -95,25 +86,39 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-# Use a managed database in serverless deployments; SQLite remains the local default.
-DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
+# Prefer a managed PostgreSQL database in production. Vercel Postgres and most
+# providers expose a PostgreSQL connection URL as DATABASE_URL or POSTGRES_URL.
+DATABASE_URL = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL")
+if IS_VERCEL and not DATABASE_URL:
+    raise ImproperlyConfigured(
+        "Set DATABASE_URL or POSTGRES_URL to a persistent PostgreSQL database before deploying to Vercel."
+    )
+
 if DATABASE_URL:
+    parsed_database_url = urlparse(DATABASE_URL)
+    if parsed_database_url.scheme not in {"postgres", "postgresql"}:
+        raise ImproperlyConfigured("DATABASE_URL must use the postgres:// or postgresql:// scheme.")
+    database_options = dict(parse_qsl(parsed_database_url.query))
+    if IS_VERCEL:
+        database_options.setdefault("sslmode", "require")
     DATABASES = {
-        "default": dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=0,
-            conn_health_checks=True,
-        )
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": unquote(parsed_database_url.path.lstrip("/")),
+            "USER": unquote(parsed_database_url.username or ""),
+            "PASSWORD": unquote(parsed_database_url.password or ""),
+            "HOST": parsed_database_url.hostname or "",
+            "PORT": parsed_database_url.port or "",
+            "OPTIONS": database_options,
+            "CONN_MAX_AGE": 0 if IS_VERCEL else 60,
+        }
     }
-    if os.environ.get("VERCEL") and DATABASES["default"]["ENGINE"] != "django.db.backends.postgresql":
-        raise ImproperlyConfigured("DATABASE_URL must point to managed PostgreSQL on Vercel.")
-elif os.environ.get("VERCEL"):
-    raise ImproperlyConfigured("Set DATABASE_URL to a managed PostgreSQL connection string on Vercel.")
 else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.environ.get("DJANGO_DB_PATH") or BASE_DIR / "db.sqlite3",
+            "NAME": os.environ.get("DJANGO_DB_PATH")
+            or BASE_DIR / "db.sqlite3",
             "OPTIONS": {"timeout": 20},  # wait up to 20s if another request holds the write lock
         }
     }
@@ -134,21 +139,24 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
-BLOB_STORE_ID = os.environ.get("BLOB_STORE_ID", "").strip()
-if os.environ.get("VERCEL") and not BLOB_STORE_ID:
-    raise ImproperlyConfigured("Connect a public Vercel Blob store and set BLOB_STORE_ID for persistent image uploads.")
+if os.environ.get("VERCEL") or os.environ.get("VERCEL_ENV") or os.environ.get("VERCEL_URL"):
+    MEDIA_ROOT = Path("/tmp/kulosa-media")
+else:
+    MEDIA_ROOT = Path(os.environ.get("DJANGO_MEDIA_ROOT") or BASE_DIR / "media")
 
-STORAGES = {
-    "default": {
-        "BACKEND": (
-            "apps.core.storage.VercelBlobStorage"
-            if BLOB_STORE_ID
-            else "django.core.files.storage.FileSystemStorage"
+if IS_VERCEL:
+    if not (
+        os.environ.get("BLOB_READ_WRITE_TOKEN")
+        or os.environ.get("VERCEL_BLOB_READ_WRITE_TOKEN")
+        or os.environ.get("BLOB_STORE_ID")
+    ):
+        raise ImproperlyConfigured(
+            "Connect a Vercel Blob store before deploying. It must provide BLOB_READ_WRITE_TOKEN or BLOB_STORE_ID."
         )
-    },
-    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
-}
+    STORAGES = {
+        "default": {"BACKEND": "apps.events.storage.VercelBlobStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    }
 
 # Email: prints password-reset emails to the console in development.
 EMAIL_BACKEND = os.environ.get("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
@@ -158,7 +166,11 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", False)
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "KULOSA <no-reply@localhost>")
-SITE_URL = os.environ.get("SITE_URL", "http://127.0.0.1:8000")  # used in emails
+VERCEL_SITE_HOST = os.environ.get("VERCEL_PROJECT_PRODUCTION_URL") or os.environ.get("VERCEL_URL")
+SITE_URL = os.environ.get(
+    "SITE_URL",
+    f"https://{VERCEL_SITE_HOST}" if VERCEL_SITE_HOST else "http://127.0.0.1:8000",
+)  # used in emails
 # Staff who get an email for each new submission and report (comma separated; empty = no emails).
 MODERATOR_EMAILS = [e.strip() for e in os.environ.get("MODERATOR_EMAILS", "").split(",") if e.strip()]
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 3  # reset links last 3 hours
@@ -167,6 +179,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 if not DEBUG:
     SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", True)
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 31536000
@@ -175,3 +188,25 @@ if not DEBUG:
 # Faster password hashing ONLY when running the test suite.
 if "test" in sys.argv[1:2]:
     PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get(
+        "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1"
+    ).split(",")
+    if host.strip()
+] + [
+    os.environ[name]
+    for name in ("VERCEL_URL", "VERCEL_PROJECT_PRODUCTION_URL")
+    if os.environ.get(name)
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
+] + [
+    f"https://{os.environ[name]}"
+    for name in ("VERCEL_URL", "VERCEL_PROJECT_PRODUCTION_URL")
+    if os.environ.get(name)
+]

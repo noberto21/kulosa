@@ -7,8 +7,16 @@
   <meta name="description" content="{% block meta_description %}Find concerts, matches, festivals, parties, campus events and community activities across Kenya, and share your own.{% endblock %}">
   <meta name="theme-color" content="#0B1F3A">
   {% if noindex %}<meta name="robots" content="noindex, nofollow">{% endif %}
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+  <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
   <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
   {% block head_extra %}{% endblock %}
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="flex min-h-screen flex-col">
   <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">Skip to content</a>
@@ -21,5 +29,9 @@
   <main id="main" class="flex-1">{% block content %}{% endblock %}</main>
   {% include "partials/_footer.html" %}
   <script src="{% static 'js/main.js' %}" defer></script>
+  {% if vercel_analytics_enabled %}
+    <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+    <script defer src="/_vercel/insights/script.js"></script>
+  {% endif %}
 </body>
 </html>

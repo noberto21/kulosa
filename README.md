@@ -47,7 +47,7 @@ Stack: Python, Django, SQLite for local development, PostgreSQL for serverless d
 
 ## What is NOT built yet
 
-- Contact, Terms and Privacy pages show a "not available yet" page. Write real ones before launch.
+- Contact page shows a "not available yet" page. Write a real one before launch.
 - The newsletter box is a disabled placeholder.
 - Per-event timezone (all events use East Africa Time).
 - Email verification at sign-up.
@@ -87,17 +87,7 @@ Open http://127.0.0.1:8000/
 
 ## Database
 
-Local development uses SQLite by default. Run `python manage.py migrate` once after setup. The file is `db.sqlite3` in the project folder by default; set `DJANGO_DB_PATH` in `.env` to store it elsewhere.
-
-For Vercel, connect a managed PostgreSQL database (such as Neon through the Vercel Marketplace) and set its `DATABASE_URL` in the project's environment variables. SQLite is not suitable for Vercel's read-only, ephemeral function filesystem. Django selects PostgreSQL when `DATABASE_URL` is set and refuses to start on Vercel without it. After provisioning, run `python manage.py migrate` from a trusted environment with the production `DATABASE_URL` set, before directing traffic to the deployment. Keep `DATABASE_URL` secret.
-
-User-uploaded event posters and organizer logos also need persistent storage on Vercel. Connect a **public Vercel Blob store** to the project so `BLOB_STORE_ID` and Blob credentials are available. Django automatically uses Blob for image uploads when the store is connected; local development continues to use `media/`. To restore files from an existing local `media/` directory, run `python manage.py sync_media_to_blob` from a trusted environment with the Blob store connected. Files already lost from the deployment filesystem must be recovered from a local copy or backup before syncing.
-
-Production notes for local/single-server SQLite deployments:
-
-- Keep the file outside the project folder (set `DJANGO_DB_PATH`) so redeploys never overwrite it, and restrict its permissions to the app user.
-- Back it up regularly, for example `sqlite3 /path/db.sqlite3 ".backup '/path/backup.sqlite3'"` from a daily cron job. Don't just copy the file while the site is running.
-- SQLite allows one writer at a time. That's fine for a small or medium site on a single server; if KULOSA outgrows it, Django makes switching databases a settings change plus a data export.
+Local development uses SQLite by default. Production on Vercel requires a managed PostgreSQL database; the app deliberately refuses to start there without `DATABASE_URL` or `POSTGRES_URL`, so production data cannot silently end up in ephemeral SQLite.
 
 ## Tailwind CSS
 
@@ -133,5 +123,39 @@ Password-reset emails print to the console in development. For production set `D
 
 - Rate limits use Django's cache. The default is per-process memory; configure a shared cache (Redis or Memcached) so limits hold across workers.
 - Behind a proxy, make sure the proxy sets `REMOTE_ADDR` correctly; `X-Forwarded-For` is deliberately not trusted.
-- Media uploads are stored locally under `media/` (served by Django only when `DJANGO_DEBUG=True`). In production serve `/media/` from your web server or move to cloud storage, and back it up.
+- Local media uploads use the filesystem. Vercel uses a public Vercel Blob store for persistent event posters and organizer logos; the function's `/tmp` directory is not used for uploaded media.
 - Set `SITE_URL` so links in emails point to your real domain.
+
+## Fresh Vercel deployment (PostgreSQL and Blob)
+
+1. Push the application code to GitHub and import that repository in Vercel. Keep the Root Directory at the repository root (the directory containing `manage.py`) and use the Django framework defaults.
+2. Before the first deployment, provision a managed PostgreSQL database through the Vercel Marketplace (Neon is supported) and connect it to the project. Set `DATABASE_URL` for Production. `POSTGRES_URL` is also supported; do not rename the variable with a custom prefix. Use a separate database or branch for Preview.
+3. In the same Vercel project, create a **public** Vercel Blob store and connect it to Production. This app serves event posters and organizer logos directly from their Blob URLs, so the store must be public. Ensure the project receives `BLOB_READ_WRITE_TOKEN` (or `BLOB_STORE_ID` when using Vercel OIDC). Connect a separate store for Preview if Preview deployments are enabled.
+4. Set `DJANGO_SECRET_KEY` to a new, private, high-entropy value in Vercel for Production and Preview. Keep `DJANGO_DEBUG` unset or set it to `False`. Never reuse or upload a local `.env` file or commit secrets.
+5. Set any optional production values such as `SITE_URL`, SMTP email settings, and `MODERATOR_EMAILS`. Vercel supplies its deployment host variables automatically; Django uses those for allowed hosts and CSRF.
+6. Deploy. Vercel must have the PostgreSQL and Blob variables before the app starts: Django intentionally stops with a configuration error if a Vercel deployment has no persistent database or Blob store. The application runs its Django migrations at startup; check the deployment/runtime logs and verify the site and `/admin/` load before creating the admin user.
+7. Create a superuser in that same PostgreSQL database. From PowerShell in the repository root, run the following and paste the Production `DATABASE_URL` only at the hidden prompt:
+
+   ```powershell
+   $secureUrl = Read-Host "Production PostgreSQL URL" -AsSecureString
+   $pointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureUrl)
+   try {
+       $env:DATABASE_URL = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($pointer)
+       python manage.py migrate
+       if ($LASTEXITCODE -ne 0) { throw "Database migration failed." }
+       python manage.py createsuperuser
+       if ($LASTEXITCODE -ne 0) { throw "Superuser creation failed." }
+   }
+   finally {
+       Remove-Item Env:DATABASE_URL -ErrorAction SilentlyContinue
+       [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pointer)
+       Remove-Variable secureUrl, pointer -ErrorAction SilentlyContinue
+   }
+   ```
+
+   Use the same PostgreSQL database that Vercel has in Production. This creates a new production admin account; it does not copy local SQLite users or events. Do not paste the database URL or account password into chat or source control.
+8. Log in at `https://<your-production-domain>/admin/`. The site registration form does not grant staff/admin permission; use `createsuperuser` for the first admin.
+
+If a domain is added later, set `SITE_URL` to its HTTPS origin. Web Analytics is optional and can be enabled in Vercel's Analytics dashboard.
+
+The local `.env.example` is for development only. It uses SQLite and filesystem media unless local database/storage variables are explicitly configured. Production password-reset and moderator emails will not be delivered until SMTP is configured.
