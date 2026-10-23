@@ -2,7 +2,7 @@
 
 Kenya-first event discovery and sharing. **Discover. Share. Experience.**
 
-Stack: Python, Django, SQLite, Django Templates, Tailwind CSS, vanilla JavaScript.
+Stack: Python, Django, SQLite for local development, PostgreSQL for serverless deployments, Django Templates, Tailwind CSS, vanilla JavaScript.
 
 ## Phase 1 (design)
 

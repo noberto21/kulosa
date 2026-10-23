@@ -3,8 +3,11 @@ import os
 import sys
 from urllib.parse import parse_qsl, unquote, urlparse
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from django.core.exceptions import ImproperlyConfigured
+
+import dj_database_url
 
 try:
     from dotenv import load_dotenv
@@ -132,7 +135,7 @@ TIME_ZONE = "Africa/Nairobi"
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
