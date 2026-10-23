@@ -72,7 +72,7 @@ class OrganizerProfile(models.Model):
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="organizer_profile")
     name = models.CharField("organization name", max_length=120)
     slug = models.SlugField(max_length=140, unique=True, blank=True)
-    logo = models.ImageField(upload_to=logo_upload_path, blank=True)
+    logo = models.ImageField(upload_to=logo_upload_path, blank=True, max_length=500)
     description = models.TextField(blank=True, max_length=2000)
     contact_email = models.EmailField(blank=True)
     contact_phone = models.CharField(max_length=20, blank=True)
@@ -123,7 +123,7 @@ class Event(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="events")
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="events")
     organizer = models.ForeignKey(OrganizerProfile, null=True, blank=True, on_delete=models.SET_NULL, related_name="events")
-    cover_image = models.ImageField(upload_to=poster_upload_path, blank=True)
+    cover_image = models.ImageField(upload_to=poster_upload_path, blank=True, max_length=500)
 
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
@@ -166,7 +166,11 @@ class Event(models.Model):
         ]
         constraints = [
             models.CheckConstraint(condition=Q(end_datetime__gt=models.F("start_datetime")), name="event_end_after_start"),
-            models.CheckConstraint(condition=Q(is_free=True) | Q(ticket_price__isnull=False), name="event_paid_needs_price"),
+            models.CheckConstraint(
+                condition=(Q(is_free=True) & Q(ticket_price__isnull=True))
+                | (Q(is_free=False) & Q(ticket_price__isnull=False) & Q(ticket_price__gte=Decimal("0"))),
+                name="event_paid_price_rules",
+            ),
         ]
 
     def __str__(self):
@@ -176,6 +180,8 @@ class Event(models.Model):
         errors = {}
         if self.start_datetime and self.end_datetime and self.end_datetime <= self.start_datetime:
             errors["end_datetime"] = "The end time must be after the start time."
+        if self.ticket_price is not None and self.ticket_price < 0:
+            errors["ticket_price"] = "Ticket price cannot be negative."
         if not self.is_free and self.ticket_price is None:
             errors["ticket_price"] = "Enter a ticket price, or mark the event as free."
         if self.is_free:

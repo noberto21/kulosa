@@ -9,9 +9,9 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("categories/", views.categories, name="categories"),
     path("about/", views.about, name="about"),
+    path("terms/", views.terms, name="terms"),
+    path("privacy/", views.privacy, name="privacy"),
     # Not built yet: these render an honest "coming soon" page.
     path("share-event/", RedirectView.as_view(pattern_name="dashboard:create"), name="share_event"),
     path("contact/", views.coming_soon, {"feature": "Contact"}, name="contact"),
-    path("terms/", views.coming_soon, {"feature": "Terms of use"}, name="terms"),
-    path("privacy/", views.coming_soon, {"feature": "Privacy policy"}, name="privacy"),
 ]
