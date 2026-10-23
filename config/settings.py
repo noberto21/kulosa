@@ -2,6 +2,7 @@
 import os
 import sys
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -30,6 +31,17 @@ if not SECRET_KEY:
         raise ImproperlyConfigured("Set DJANGO_SECRET_KEY in your environment or .env file.")
 
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",") if h.strip()]
+for vercel_host_var in ("VERCEL_URL", "VERCEL_PROJECT_PRODUCTION_URL"):
+    vercel_host = os.environ.get(vercel_host_var, "").strip()
+    if vercel_host:
+        try:
+            hostname = urlsplit(vercel_host if "://" in vercel_host else f"//{vercel_host}").hostname
+        except ValueError as exc:
+            raise ImproperlyConfigured(f"Invalid hostname in {vercel_host_var}.") from exc
+        if not hostname:
+            raise ImproperlyConfigured(f"Invalid hostname in {vercel_host_var}.")
+        if hostname not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(hostname)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
