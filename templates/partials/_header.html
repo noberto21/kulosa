@@ -1,7 +1,7 @@
 {% url 'core:home' as home_url %}{% url 'events:explore' as explore_url %}
 <header class="sticky top-0 z-40 bg-navy-900 text-white on-navy">
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-    <a href="{% url 'core:home' %}" class="rounded focus-visible:outline-offset-4">{% include "partials/_wordmark.html" %}</a>
+    <a href="{% url 'core:home' %}" class="flex shrink-0 items-center rounded focus-visible:outline-offset-4">{% include "partials/_wordmark.html" %}</a>
 
     <nav aria-label="Main" class="hidden items-center gap-6 text-sm font-medium lg:flex">
       <a href="{% url 'core:home' %}" class="hover:text-flame-500" {% if request.path == home_url %}aria-current="page"{% endif %}>Home</a>
