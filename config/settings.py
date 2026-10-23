@@ -7,7 +7,6 @@ from urllib.parse import urlsplit
 
 from django.core.exceptions import ImproperlyConfigured
 
-import dj_database_url
 
 try:
     from dotenv import load_dotenv
