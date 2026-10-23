@@ -88,6 +88,15 @@ class AuthFlowTests(TestCase):
         r = self.client.get(reverse("accounts:account"))
         self.assertRedirects(r, f"{reverse('accounts:login')}?next={reverse('accounts:account')}")
 
+    def test_account_page_shows_profile_and_navigation_cards(self):
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse("accounts:account"))
+
+        self.assertContains(response, "Account overview")
+        self.assertContains(response, "Profile information")
+        self.assertContains(response, "Password &amp; security")
+
     def test_logout_requires_post(self):
         self.client.force_login(self.user)
         self.assertEqual(self.client.get(reverse("accounts:logout")).status_code, 405)
