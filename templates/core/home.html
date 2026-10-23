@@ -1,9 +1,12 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}KULOSA | Discover what's happening near you in Kenya{% endblock %}
 {% block content %}
 
-<section class="bg-navy-900 text-white on-navy">
-  <div class="mx-auto grid max-w-6xl gap-10 px-4 py-14 lg:grid-cols-5 lg:py-20">
+<section class="relative overflow-hidden bg-navy-900 text-white on-navy">
+  <img src="{% static 'images/home-event-crowd.jpg' %}" alt="" aria-hidden="true" fetchpriority="high" class="absolute inset-0 h-full w-full object-cover object-center">
+  <div class="absolute inset-0 bg-gradient-to-r from-navy-950/95 via-navy-900/80 to-navy-900/45"></div>
+  <div class="relative mx-auto grid max-w-6xl gap-10 px-4 py-14 lg:grid-cols-5 lg:py-20">
     <div class="lg:col-span-3">
       <h1 class="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">Discover What's Happening Near You</h1>
       <p class="mt-4 max-w-xl text-lg text-white/80">Concerts, matches, festivals, campus nights and community days across Kenya, all in one place. Find something to do this week, or tell people about your own event.</p>
