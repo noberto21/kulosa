@@ -6,6 +6,8 @@ from urllib.parse import urlsplit
 
 from django.core.exceptions import ImproperlyConfigured
 
+import dj_database_url
+
 try:
     from dotenv import load_dotenv
 except ImportError:  # python-dotenv is optional at runtime
@@ -93,15 +95,28 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-# Database: SQLite. Set DJANGO_DB_PATH to keep the file outside the project
-# folder (recommended in production so deploys never overwrite it).
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.environ.get("DJANGO_DB_PATH") or BASE_DIR / "db.sqlite3",
-        "OPTIONS": {"timeout": 20},  # wait up to 20s if another request holds the write lock
+# Use a managed database in serverless deployments; SQLite remains the local default.
+DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=0,
+            conn_health_checks=True,
+        )
     }
-}
+    if os.environ.get("VERCEL") and DATABASES["default"]["ENGINE"] != "django.db.backends.postgresql":
+        raise ImproperlyConfigured("DATABASE_URL must point to managed PostgreSQL on Vercel.")
+elif os.environ.get("VERCEL"):
+    raise ImproperlyConfigured("Set DATABASE_URL to a managed PostgreSQL connection string on Vercel.")
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.environ.get("DJANGO_DB_PATH") or BASE_DIR / "db.sqlite3",
+            "OPTIONS": {"timeout": 20},  # wait up to 20s if another request holds the write lock
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

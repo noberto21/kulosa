@@ -2,7 +2,7 @@
 
 Kenya-first event discovery and sharing. **Discover. Share. Experience.**
 
-Stack: Python, Django, SQLite, Django Templates, Tailwind CSS, vanilla JavaScript.
+Stack: Python, Django, SQLite for local development, PostgreSQL for serverless deployments, Django Templates, Tailwind CSS, vanilla JavaScript.
 
 ## Phase 1 (design)
 
@@ -87,9 +87,11 @@ Open http://127.0.0.1:8000/
 
 ## Database
 
-KULOSA uses SQLite, so there is no database server to install. Run `python manage.py migrate` once after setup. The file is `db.sqlite3` in the project folder by default; set `DJANGO_DB_PATH` in `.env` to store it elsewhere.
+Local development uses SQLite by default. Run `python manage.py migrate` once after setup. The file is `db.sqlite3` in the project folder by default; set `DJANGO_DB_PATH` in `.env` to store it elsewhere.
 
-Production notes for SQLite:
+For Vercel, connect a managed PostgreSQL database (such as Neon through the Vercel Marketplace) and set its `DATABASE_URL` in the project's environment variables. SQLite is not suitable for Vercel's read-only, ephemeral function filesystem. Django selects PostgreSQL when `DATABASE_URL` is set and refuses to start on Vercel without it. After provisioning, run `python manage.py migrate` from a trusted environment with the production `DATABASE_URL` set, before directing traffic to the deployment. Keep `DATABASE_URL` secret.
+
+Production notes for local/single-server SQLite deployments:
 
 - Keep the file outside the project folder (set `DJANGO_DB_PATH`) so redeploys never overwrite it, and restrict its permissions to the app user.
 - Back it up regularly, for example `sqlite3 /path/db.sqlite3 ".backup '/path/backup.sqlite3'"` from a daily cron job. Don't just copy the file while the site is running.
