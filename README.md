@@ -91,6 +91,8 @@ Local development uses SQLite by default. Run `python manage.py migrate` once af
 
 For Vercel, connect a managed PostgreSQL database (such as Neon through the Vercel Marketplace) and set its `DATABASE_URL` in the project's environment variables. SQLite is not suitable for Vercel's read-only, ephemeral function filesystem. Django selects PostgreSQL when `DATABASE_URL` is set and refuses to start on Vercel without it. After provisioning, run `python manage.py migrate` from a trusted environment with the production `DATABASE_URL` set, before directing traffic to the deployment. Keep `DATABASE_URL` secret.
 
+User-uploaded event posters and organizer logos also need persistent storage on Vercel. Connect a **public Vercel Blob store** to the project so `BLOB_STORE_ID` and Blob credentials are available. Django automatically uses Blob for image uploads when the store is connected; local development continues to use `media/`. To restore files from an existing local `media/` directory, run `python manage.py sync_media_to_blob` from a trusted environment with the Blob store connected. Files already lost from the deployment filesystem must be recovered from a local copy or backup before syncing.
+
 Production notes for local/single-server SQLite deployments:
 
 - Keep the file outside the project folder (set `DJANGO_DB_PATH`) so redeploys never overwrite it, and restrict its permissions to the app user.

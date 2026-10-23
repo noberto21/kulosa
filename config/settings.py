@@ -130,11 +130,25 @@ TIME_ZONE = "Africa/Nairobi"
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
-MEDIA_URL = "media/"
+MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+BLOB_STORE_ID = os.environ.get("BLOB_STORE_ID", "").strip()
+if os.environ.get("VERCEL") and not BLOB_STORE_ID:
+    raise ImproperlyConfigured("Connect a public Vercel Blob store and set BLOB_STORE_ID for persistent image uploads.")
+
+STORAGES = {
+    "default": {
+        "BACKEND": (
+            "apps.core.storage.VercelBlobStorage"
+            if BLOB_STORE_ID
+            else "django.core.files.storage.FileSystemStorage"
+        )
+    },
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}
 
 # Email: prints password-reset emails to the console in development.
 EMAIL_BACKEND = os.environ.get("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
